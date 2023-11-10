@@ -298,6 +298,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"PauseLateralOnSignal", PERSISTENT},
     {"PersonalityChangedViaUI", PERSISTENT},
     {"PersonalityChangedViaWheel", PERSISTENT},
+    {"RandomEvents", PERSISTENT},
+    {"RandomEventsIcon", PERSISTENT},
     {"RelaxedFollow", PERSISTENT},
     {"RelaxedJerk", PERSISTENT},
     {"ReverseCruise", PERSISTENT},

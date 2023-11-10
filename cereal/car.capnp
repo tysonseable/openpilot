@@ -122,9 +122,10 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     frogSteerSaturated @120;
     greenLight @121;
     pedalInterceptorNoBrake @122;
-    torqueNNLoad @123;
-    turningLeft @124;
-    turningRight @125;
+    randomEventsSteerSaturated @123;
+    torqueNNLoad @124;
+    turningLeft @125;
+    turningRight @126;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -421,6 +422,9 @@ struct CarControl {
       prompt @6;
       promptRepeat @7;
       promptDistracted @8;
+
+      # FrogPilot Random Events alerts
+      firefox @9;
     }
   }
 

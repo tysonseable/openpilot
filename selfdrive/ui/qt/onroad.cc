@@ -360,7 +360,8 @@ ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(fals
     {3, loadPixmap("../assets/frog.png", {img_size, img_size})},
     {4, loadPixmap("../assets/rocket.png", {img_size, img_size})},
     {5, loadPixmap("../assets/hyundai.png", {img_size, img_size})},
-    {6, loadPixmap("../assets/stalin.png", {img_size, img_size})}
+    {6, loadPixmap("../assets/stalin.png", {img_size, img_size})},
+    {7, loadPixmap("../assets/firefox.png", {img_size, img_size})}
   };
 }
 
@@ -399,7 +400,15 @@ void ExperimentalButton::updateState(const UIState &s) {
 }
 
 void ExperimentalButton::paintEvent(QPaintEvent *event) {
+  static int rotationDegree = 0;
   QPainter p(this);
+
+  const bool randomEventsIcon = paramsMemory.getInt("RandomEventsIcon") == 1;
+  if (randomEventsIcon) {
+    wheelIcon = 7;
+    rotationDegree = (rotationDegree + 36) % 360;
+  }
+
   // Custom steering wheel icon
   engage_img = wheelImages[wheelIcon];
   QPixmap img = wheelIcon ? engage_img : (experimental_mode ? experimental_img : engage_img);
@@ -412,8 +421,9 @@ void ExperimentalButton::paintEvent(QPaintEvent *event) {
       QColor(0, 0, 0, 166));
 
   if (!scene.show_driver_camera) {
-    if (rotatingWheel) {
-      drawIconRotate(p, QPoint(btn_size / 2, btn_size / 2 + (leadInfo ? 10 : 0)), img, background_color, (isDown() || (!engageable && !scene.always_on_lateral_active)) ? 0.6 : 1.0, steeringAngleDeg);
+    if (rotatingWheel || randomEventsIcon) {
+      int angle = randomEventsIcon ? rotationDegree : steeringAngleDeg;
+      drawIconRotate(p, QPoint(btn_size / 2, btn_size / 2 + (leadInfo ? 10 : 0)), img, background_color, (isDown() || (!engageable && !scene.always_on_lateral_active)) ? 0.6 : 1.0, angle);
     } else {
       drawIcon(p, QPoint(btn_size / 2, btn_size / 2 + (leadInfo ? 10 : 0)), img, background_color, (isDown() || (!engageable && !scene.always_on_lateral_active)) ? 0.6 : 1.0);
     }

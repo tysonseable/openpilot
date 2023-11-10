@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 import math
 import os
+import random
 from enum import IntEnum
 from typing import Dict, Union, Callable, List, Optional
 
 from cereal import log, car
 import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
+from openpilot.common.params import Params
 from openpilot.common.realtime import DT_CTRL
 from openpilot.selfdrive.locationd.calibrationd import MIN_SPEED_FILTER
 from openpilot.system.version import get_short_branch
@@ -17,6 +19,10 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
 EventName = car.CarEvent.EventName
 
+choice = random.choice([
+  ("Turn Exceeds Steering Limit", "IE Has Stopped Responding...", AudibleAlert.firefox, 1),
+])
+Params("/dev/shm/params").put_int("RandomEventsIcon", choice[3])
 
 # Alert priorities
 class Priority(IntEnum):
@@ -981,6 +987,13 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   # FrogPilot Events
+  EventName.randomEventsSteerSaturated: {
+    ET.WARNING: Alert(
+      choice[0], choice[1], AlertStatus.userPrompt, AlertSize.mid, Priority.LOW,
+      VisualAlert.steerRequired, choice[2], 2.
+    )
+  },
+
   EventName.frogSteerSaturated: {
     ET.WARNING: Alert(
       "Turn Exceeds Steering Limit",

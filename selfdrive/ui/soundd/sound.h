@@ -24,6 +24,9 @@ const std::tuple<AudibleAlert, QString, int, float> sound_list[] = {
 
   {AudibleAlert::WARNING_SOFT, "warning_soft.wav", QSoundEffect::Infinite, MAX_VOLUME},
   {AudibleAlert::WARNING_IMMEDIATE, "warning_immediate.wav", QSoundEffect::Infinite, MAX_VOLUME},
+
+  // FrogPilot Random Events alerts
+  {AudibleAlert::FIREFOX, "firefox.wav", QSoundEffect::Infinite, MAX_VOLUME},
 };
 
 class Sound : public QObject {
