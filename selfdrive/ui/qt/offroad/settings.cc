@@ -371,6 +371,7 @@ BehaviorPanel::BehaviorPanel(SettingsWindow *parent) : ListWidget(parent){
     sliders[slider_def.paramName] = slider; // Store the slider pointer in the map
     sliderItems[slider_def.paramName] = slider->getSliderItem(); // Store the slider item pointer in the map
     addItem(slider->getSliderItem()); // Add the slider item to the list widget
+    connect(slider, &CustomSlider::sliderValueChanged, this, &BehaviorPanel::sendAllSliderValues);
   }
 
   // create a pubmaster for all the sliders

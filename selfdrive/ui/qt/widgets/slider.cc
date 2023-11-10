@@ -1,5 +1,5 @@
 #include "selfdrive/ui/qt/widgets/slider.h"
-#include "selfdrive/ui/qt/widgets/controls.h"
+
 #include "selfdrive/ui/qt/offroad/settings.h"
 
 
@@ -37,101 +37,58 @@ void CustomSlider::initialize()
   titleLayout->addWidget(label, 0, Qt::AlignLeft);
 
   // Create the reset button
-  ButtonControl *resetButton = new ButtonControl("  ", tr("RESET"));
+  resetButton = new ButtonControl("  ", tr("RESET"));
   titleLayout->addWidget(resetButton, 0, Qt::AlignRight);
-  // Connect the reset button to set the slider value to the default value
-  connect(resetButton, &ButtonControl::clicked, [&]() {
-    if (ConfirmationDialog::confirm(tr("Are you sure you want to reset ") + QString::fromStdString(param) + "?", tr("Reset"), this)) {
-      this->setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
-      QWidget* widget = this->parentWidget();
-      BehaviorPanel* parentBehaviorPanel = nullptr;
-
-      while (widget) {
-        parentBehaviorPanel = qobject_cast<BehaviorPanel *>(widget);
-        if (parentBehaviorPanel) {
-          break;
-        }
-        widget = widget->parentWidget();
-      }
-      if (parentBehaviorPanel) {
-        parentBehaviorPanel->sendAllSliderValues();
-      }
-      } 
-  });
+  
   
   // slider settings
   setFixedHeight(100);
   setMinimum(sliderMin);
   setMaximum(sliderMax);
-
-  // Set the default value of the slider to begin with
-  setSliderValue(defaultVal);
-
-  try // Try to get the value of the param from params. If it doesn't exist, catch the error
-  {
-    QString valueStr;
-    double value;
-    if (Params().getBool("BehaviordInitialized")){
-      valueStr = QString::fromStdString(Params().get(param));
-      value = QString(valueStr).toDouble();
-    } else{
-      value = defaultVal;
-    }
-    
-    // Set the value of the param in the behavior struct
-    MessageBuilder msg;
-    auto behavior = msg.initEvent().initBehavior();
-    cerealSetFunc(behavior, value); 
-
-    setSliderValue(value);
-    
-    // Set the slider to be enabled or disabled depending on the lock status
-    bool locked = Params().getBool((param + "Lock"));
-    setEnabled(!locked);
-    setStyleSheet(locked ? lockedSliderStyle : SliderStyle);
-    label->setStyleSheet(locked ? lockedLabelStyle : LabelStyle);
-
+  setStyleSheet(SliderStyle);
+  label->setStyleSheet(LabelStyle);
+  
+  double value;
+  if (Params().getBool("BehaviordInitialized")){
+    QString valueStr = QString::fromStdString(Params().get(param));
+    value = QString(valueStr).toDouble();
+  } else{
+    value = defaultVal;
   }
-  catch (const std::invalid_argument &e)
-  {
-    // Handle the error, e.g. lock the slider and display an error message as the label
-    setValue(0);
-    label->setText(title + "Error: Param not found. Add param to behaviord");
-    setEnabled(false);
-    setStyleSheet(lockedSliderStyle);
-  }
+
+  // Set the value of the param in the behavior struct
+  MessageBuilder msg;
+  auto behavior = msg.initEvent().initBehavior();
+  cerealSetFunc(behavior, value);
+
+  setupConnections();
+  // Set the slider value
+  setSliderValue(value);
 
   mainLayout->addWidget(this);
-
-  connectSliderValueChanged();
-
-  connect(this, &CustomSlider::sliderReleased, [this]() {
-    QWidget* widget = this->parentWidget();
-    BehaviorPanel* parentBehaviorPanel = nullptr;
-
-    while (widget) {
-      parentBehaviorPanel = qobject_cast<BehaviorPanel *>(widget);
-      if (parentBehaviorPanel) {
-        break;
-      }
-      widget = widget->parentWidget();
-    }
-    if (parentBehaviorPanel) {
-      parentBehaviorPanel->sendAllSliderValues();
-    }
-  });
-
 }
 
 void CustomSlider::setSliderValue(double value) {
   setValue(sliderMin + (value - paramMin) / (paramMax - paramMin) * (sliderRange));
-  updateLabel(value);
 }
 
-void CustomSlider::connectSliderValueChanged() {
+void CustomSlider::setupConnections() {
+  // Value Changed
   connect(this, &CustomSlider::valueChanged, [=](int value) {
     double dValue = paramMin + (paramMax - paramMin) * (value - sliderMin) / (sliderRange);
     updateLabel(dValue);
+  });
+  
+  // Release slider
+  connect(this, &CustomSlider::sliderReleased, [this]() {
+    emit sliderValueChanged();
+  });
+  // Connect the reset button to set the slider value to the default value
+  connect(resetButton, &ButtonControl::clicked, [&]() {
+    if (ConfirmationDialog::confirm(tr("Are you sure you want to reset ") + QString::fromStdString(param) + "?", tr("Reset"), this)) {
+      this->setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
+      emit this->sliderValueChanged();
+    }
   });
 }
 

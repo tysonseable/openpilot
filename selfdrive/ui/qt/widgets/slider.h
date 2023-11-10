@@ -11,6 +11,7 @@
 #include <functional>
 #include "common/params.h"
 #include "selfdrive/ui/ui.h"
+#include "selfdrive/ui/qt/widgets/controls.h"
 
 class CustomSlider : public QSlider {
   Q_OBJECT
@@ -36,17 +37,11 @@ public:
 signals:
   void sliderValueChanged();
 
-protected:
-  void mouseReleaseEvent(QMouseEvent *event) override {
-    QSlider::mouseReleaseEvent(event);
-    emit sliderValueChanged();
-  }
-
 private:
   void initialize();
   void setSliderValue(double value);
   void updateLabel(double value);
-  void connectSliderValueChanged();
+  void setupConnections();
 
   double defaultVal;
   double scaleFactor;
@@ -54,6 +49,7 @@ private:
   QString title;
   QString unit;
 
+  ButtonControl *resetButton;
   QWidget *sliderItem;
   QLabel *label;
   
