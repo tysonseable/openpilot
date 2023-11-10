@@ -15,6 +15,7 @@
 #include "common/util.h"
 #include "system/hardware/hw.h"
 #include "selfdrive/ui/qt/offroad/frogpilot_settings.h"
+#include "selfdrive/ui/qt/offroad/frogpilot_navigation_settings.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/qt/widgets/input.h"
 #include "selfdrive/ui/qt/widgets/scrollview.h"
@@ -412,13 +413,10 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {tr("Toggles"), toggles},
     {tr("Software"), new SoftwarePanel(this)},
     {tr("Controls"), new FrogPilotControlsPanel(this)},
+    {tr("Navigation"), new FrogPilotNavigationPanel(this)},
     {tr("Vehicles"), new FrogPilotVehiclesPanel(this)},
     {tr("Visuals"), new FrogPilotVisualsPanel(this)},
   };
-
-  if (Params().getInt("PrimeType") == 0) {
-    panels.append({tr("Navigation"), new FrogPilotNavigationPanel(this)});
-  }
 
   nav_btns = new QButtonGroup(this);
   for (auto &[name, panel] : panels) {
