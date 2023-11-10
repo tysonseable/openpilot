@@ -34,17 +34,20 @@ public:
   int sliderMax = 10000;
 
 signals:
-  void sliderReleasedWithValue(int value);
+  void sliderValueChanged();
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event) override {
     QSlider::mouseReleaseEvent(event);
-    emit sliderReleasedWithValue(value());
+    emit sliderValueChanged();
   }
 
 private:
   void initialize();
-  
+  void setSliderValue(double value);
+  void updateLabel(double value);
+  void connectSliderValueChanged();
+
   double defaultVal;
   double scaleFactor;
   std::string param;

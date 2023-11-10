@@ -43,7 +43,20 @@ void CustomSlider::initialize()
   connect(resetButton, &ButtonControl::clicked, [&]() {
     if (ConfirmationDialog::confirm(tr("Are you sure you want to reset ") + QString::fromStdString(param) + "?", tr("Reset"), this)) {
       this->setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
-    } 
+      QWidget* widget = this->parentWidget();
+      BehaviorPanel* parentBehaviorPanel = nullptr;
+
+      while (widget) {
+        parentBehaviorPanel = qobject_cast<BehaviorPanel *>(widget);
+        if (parentBehaviorPanel) {
+          break;
+        }
+        widget = widget->parentWidget();
+      }
+      if (parentBehaviorPanel) {
+        parentBehaviorPanel->sendAllSliderValues();
+      }
+      } 
   });
   
   // slider settings
@@ -52,14 +65,13 @@ void CustomSlider::initialize()
   setMaximum(sliderMax);
 
   // Set the default value of the slider to begin with
-  setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
-  label->setText(title + " " + QString::number(defaultVal, 'f', 2) + " " + unit);
+  setSliderValue(defaultVal);
 
   try // Try to get the value of the param from params. If it doesn't exist, catch the error
   {
     QString valueStr;
     double value;
-    if (Params().getBool("BehaviordInitialiazed")){
+    if (Params().getBool("BehaviordInitialized")){
       valueStr = QString::fromStdString(Params().get(param));
       value = QString(valueStr).toDouble();
     } else{
@@ -71,8 +83,7 @@ void CustomSlider::initialize()
     auto behavior = msg.initEvent().initBehavior();
     cerealSetFunc(behavior, value); 
 
-    setValue(sliderMin + (value - paramMin) / (paramMax - paramMin) * (sliderRange)); // Set the value of the slider. The value is scaled to the slider range
-    label->setText(title + " " + QString::number(value, 'f', 2) + " " + unit);
+    setSliderValue(value);
     
     // Set the slider to be enabled or disabled depending on the lock status
     bool locked = Params().getBool((param + "Lock"));
@@ -92,22 +103,38 @@ void CustomSlider::initialize()
 
   mainLayout->addWidget(this);
 
-  connect(this, &CustomSlider::valueChanged, [=](int value)
-  {
-    // Update the label as the slider is moved. Don't save the value to params here
-    double dValue = paramMin + (paramMax - paramMin) * (value - sliderMin) / (sliderRange);
-    label->setText(title + " " + QString::number(dValue, 'f', 2) + " " + unit); 
-    
-  });
+  connectSliderValueChanged();
 
-  connect(this, &CustomSlider::sliderReleasedWithValue, [this]() {
-    // Call the sendAllSliderValues method from the BehaviorPanel
-    auto parentBehaviorPanel = qobject_cast<BehaviorPanel *>(this->parentWidget());
-    if (parentBehaviorPanel)
-    {
+  connect(this, &CustomSlider::sliderReleased, [this]() {
+    QWidget* widget = this->parentWidget();
+    BehaviorPanel* parentBehaviorPanel = nullptr;
+
+    while (widget) {
+      parentBehaviorPanel = qobject_cast<BehaviorPanel *>(widget);
+      if (parentBehaviorPanel) {
+        break;
+      }
+      widget = widget->parentWidget();
+    }
+    if (parentBehaviorPanel) {
       parentBehaviorPanel->sendAllSliderValues();
     }
   });
 
+}
 
+void CustomSlider::setSliderValue(double value) {
+  setValue(sliderMin + (value - paramMin) / (paramMax - paramMin) * (sliderRange));
+  updateLabel(value);
+}
+
+void CustomSlider::connectSliderValueChanged() {
+  connect(this, &CustomSlider::valueChanged, [=](int value) {
+    double dValue = paramMin + (paramMax - paramMin) * (value - sliderMin) / (sliderRange);
+    updateLabel(dValue);
+  });
+}
+
+void CustomSlider::updateLabel(double value) {
+  label->setText(title + " " + QString::number(value, 'f', 2) + " " + unit);
 }

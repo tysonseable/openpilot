@@ -342,7 +342,7 @@ BehaviorPanel::BehaviorPanel(SettingsWindow *parent) : ListWidget(parent){
   // Add sliders here
   // name, label, units, min, max, default, setter function
   std::vector<SliderDefinition> slider_defs{
-    {"MaxDeacceleration", tr("Minimum Cruise Accel:"), "m/s<sup>2</sup>", -3.0, 0.0, -1.2,
+    {"MaxDeacceleration", tr("Max Cruise De-accel:"), "m/s<sup>2</sup>", -3.0, 0.0, -1.2,
       [](cereal::Behavior::Builder &behavior, double value) {
         behavior.setMaxDeacceleration(static_cast<float>(value));
       }
@@ -371,18 +371,13 @@ BehaviorPanel::BehaviorPanel(SettingsWindow *parent) : ListWidget(parent){
     sliders[slider_def.paramName] = slider; // Store the slider pointer in the map
     sliderItems[slider_def.paramName] = slider->getSliderItem(); // Store the slider item pointer in the map
     addItem(slider->getSliderItem()); // Add the slider item to the list widget
-
   }
 
   // create a pubmaster for all the sliders
   pm = std::make_unique<PubMaster, const std::initializer_list<const char *>>(
         {"behavior"});
 
-  timer = new QTimer(this);
-  timer->setInterval(1000); // Send all slider values every interval
-  timer->start();
-
-  connect(timer, &QTimer::timeout, this, &BehaviorPanel::sendAllSliderValues);
+  sendAllSliderValues();
 }
 
 void BehaviorPanel::sendAllSliderValues()

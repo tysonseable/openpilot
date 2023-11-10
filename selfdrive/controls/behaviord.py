@@ -7,7 +7,7 @@ import time
 
 # Update this dict and run slider_gen.py to generate the code for the sliders, params, and log.capnp
 PARAMS = {
-    "MaxDeacceleration": {"default": -1.2, "range": (-3.0, 0.0), "label": "Minimum Cruise Accel:", "units": "m/s<sup>2</sup>"},
+    "MaxDeacceleration": {"default": -1.2, "range": (-3.0, 0.0), "label": "Max Cruise De-accel:", "units": "m/s<sup>2</sup>"},
     "AccelCruiseMaxFactor": {"default": 1.0, "range": (0.0, 3.0), "label": "Cruise Accel Factor:", "units": "Coef."},
 }
 
@@ -68,7 +68,7 @@ class Behaviord:
       for param in PARAMS.keys():
         self.p.put(param, str(self.get_param(param)))
       if not self.initialized:
-        self.p.put_bool("BehaviordInitialiazed", True)
+        self.p.put_bool("BehaviordInitialized", True)
         self.initialized = True
 
   def behaviord_thread(self):
