@@ -86,6 +86,9 @@ private:
 };
 
 std::unordered_map<std::string, uint32_t> keys = {
+    {"BehaviordInitialiazed", PERSISTENT},
+    {"MaxDeacceleration", PERSISTENT},
+    {"AccelCruiseMaxFactor", PERSISTENT},
     {"AccessToken", CLEAR_ON_MANAGER_START | DONT_LOG},
     {"ApiCache_Device", PERSISTENT},
     {"ApiCache_NavDestinations", PERSISTENT},

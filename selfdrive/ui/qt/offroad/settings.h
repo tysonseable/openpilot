@@ -9,10 +9,15 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
+#include <QSlider>
+#include <QScrollArea>
 
 
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
+#include "selfdrive/ui/ui.h"
+#include "selfdrive/ui/qt/widgets/slider.h"
+
 
 // ********** settings window + top-level panels **********
 class SettingsWindow : public QFrame {
@@ -70,6 +75,34 @@ private:
   ButtonParamControl *long_personality_setting;
 
   void updateToggles();
+};
+
+
+struct SliderDefinition {
+    std::string paramName;
+    QString title;
+    QString unit;
+    double paramMin;
+    double paramMax;
+    double defaultVal;
+    CustomSlider::CerealSetterFunction cerealSetFunc;
+};
+
+class BehaviorPanel : public ListWidget {
+  Q_OBJECT
+
+public:
+  explicit BehaviorPanel(SettingsWindow *parent = nullptr);
+
+public slots:
+    void sendAllSliderValues();
+
+private:
+  std::unique_ptr<PubMaster> pm;
+  Params params;
+  std::map<std::string, QWidget *> sliderItems;
+  QMap<std::string, CustomSlider *> sliders;
+  QTimer *timer;
 };
 
 class SoftwarePanel : public ListWidget {
