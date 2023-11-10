@@ -9,6 +9,7 @@
 
 #include "common/util.h"
 #include "selfdrive/ui/ui.h"
+#include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 #include "selfdrive/ui/qt/widgets/cameraview.h"
 
 
@@ -189,6 +190,10 @@ private:
   size_t animationFrameIndex;
   std::unordered_map<int, std::pair<QString, std::pair<QColor, std::map<double, QBrush>>>> themeConfiguration;
   std::vector<QPixmap> signalImgVector;
+
+  // neokii screen recorder. thx for sharing your source. 
+  std::shared_ptr<QTimer> record_timer;
+  ScreenRecorder *recorder;
 
 protected:
   void paintGL() override;
