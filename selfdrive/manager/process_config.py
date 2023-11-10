@@ -43,7 +43,6 @@ def only_offroad(started, params, CP: car.CarParams) -> bool:
 
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
-<<<<<<< HEAD
 
   NativeProcess("camerad", "system/camerad", ["./camerad"], driverview),
   NativeProcess("logcatd", "system/logcatd", ["./logcatd"], only_onroad),
@@ -82,40 +81,7 @@ procs = [
   PythonProcess("updated", "selfdrive.updated", only_offroad, enabled=not PC),
   PythonProcess("uploader", "system.loggerd.uploader", always_run),
   PythonProcess("statsd", "selfdrive.statsd", always_run),
-=======
-  NativeProcess("dmonitoringmodeld", "selfdrive/modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM), callback=driverview),
-  NativeProcess("encoderd", "system/loggerd", ["./encoderd"]),
-  NativeProcess("loggerd", "system/loggerd", ["./loggerd"], onroad=False, callback=logging),
-  NativeProcess("modeld", "selfdrive/modeld", ["./modeld"]),
-  NativeProcess("mapsd", "selfdrive/navd", ["./map_renderer"], enabled=False),
-  NativeProcess("navmodeld", "selfdrive/modeld", ["./navmodeld"], enabled=False),
-  NativeProcess("sensord", "system/sensord", ["./sensord"], enabled=not PC),
-  NativeProcess("ui", "selfdrive/ui", ["./ui"], offroad=True, watchdog_max_dt=(5 if not PC else None)),
-  NativeProcess("soundd", "selfdrive/ui/soundd", ["./soundd"], offroad=True),
-  NativeProcess("locationd", "selfdrive/locationd", ["./locationd"]),
-  NativeProcess("boardd", "selfdrive/boardd", ["./boardd"], enabled=False),
-  PythonProcess("calibrationd", "selfdrive.locationd.calibrationd"),
-  PythonProcess("torqued", "selfdrive.locationd.torqued"),
-  PythonProcess("controlsd", "selfdrive.controls.controlsd"),
-  PythonProcess("deleter", "system.loggerd.deleter", offroad=True),
-  PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", enabled=(not PC or WEBCAM), callback=driverview),
-  PythonProcess("laikad", "selfdrive.locationd.laikad"),
-  PythonProcess("rawgpsd", "system.sensord.rawgps.rawgpsd", enabled=TICI, onroad=False, callback=qcomgps),
-  PythonProcess("navd", "selfdrive.navd.navd"),
-  PythonProcess("pandad", "selfdrive.boardd.pandad", offroad=True),
-  PythonProcess("paramsd", "selfdrive.locationd.paramsd"),
-  NativeProcess("ubloxd", "system/ubloxd", ["./ubloxd"], enabled=TICI, onroad=False, callback=ublox),
-  PythonProcess("pigeond", "system.sensord.pigeond", enabled=TICI, onroad=False, callback=ublox),
-  PythonProcess("plannerd", "selfdrive.controls.plannerd"),
-  PythonProcess("radard", "selfdrive.controls.radard"),
-  PythonProcess("thermald", "selfdrive.thermald.thermald", offroad=True),
-  PythonProcess("tombstoned", "selfdrive.tombstoned", enabled=not PC, offroad=True),
-  PythonProcess("updated", "selfdrive.updated", enabled=not PC, onroad=False, offroad=True),
-  PythonProcess("uploader", "system.loggerd.uploader", offroad=True),
-  PythonProcess("statsd", "selfdrive.statsd", offroad=True),
-  PythonProcess("behaviord", "selfdrive.controls.behaviord", offroad=True),
->>>>>>> d1acac47a... basic sliders
-
+  PythonProcess("behaviord", "selfdrive.controls.behaviord", always_run),
   # debug procs
   NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),
   PythonProcess("webjoystick", "tools.bodyteleop.web", notcar),
