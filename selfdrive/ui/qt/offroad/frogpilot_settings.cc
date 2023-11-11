@@ -481,6 +481,7 @@ void FrogPilotPanel::setParams() {
     {"PathWidth", "61"},
     {"PauseLateralOnSignal", "0"},
     {"RandomEvents", FrogsGoMoo ? "1" : "0"},
+    {"RecordBack", "1"},
     {"RelaxedFollow", "30"},
     {"RelaxedJerk", "50"},
     {"RoadEdgesWidth", "2"},
