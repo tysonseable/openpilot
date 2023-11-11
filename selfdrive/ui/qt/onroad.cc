@@ -87,6 +87,23 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent), scene(uiState()->
     QMouseEvent *event = new QMouseEvent(QEvent::MouseButtonPress, timeoutPoint, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     QApplication::postEvent(this, event);
   });
+
+  // screen recoder - neokii
+  record_timer = std::make_shared<QTimer>();
+  QObject::connect(record_timer.get(), &QTimer::timeout, [this] {
+    if (recorder) {
+      recorder->update_screen();
+    }
+  });
+  record_timer->start(1000 / UI_FREQ);
+  QWidget *recorder_widget = new QWidget(this);
+  QVBoxLayout *recorder_layout = new QVBoxLayout(recorder_widget);
+  recorder_layout->setMargin(35);
+  recorder = new ScreenRecorder(this);
+  recorder_layout->addWidget(recorder);
+  recorder_layout->setAlignment(recorder, Qt::AlignRight | Qt::AlignCenter);
+  stacked_layout->addWidget(recorder_widget);
+  recorder_widget->raise();
 }
 
 void OnroadWindow::updateState(const UIState &s) {
@@ -270,6 +287,12 @@ void OnroadWindow::paintEvent(QPaintEvent *event) {
     const int xPos = (currentRect.width() - textWidth) / 2;
     const int yPos = currentRect.bottom() - 5;
     p.drawText(xPos, yPos, fpsDisplayString);
+  }
+
+  UIState *s = uiState();
+  if (!s->scene.rec_stat || s->scene.rec_stat) {
+    if (recorder) recorder->toggle();
+    s->scene.rec_stat = !s->scene.rec_stat;
   }
 }
 
@@ -506,26 +529,6 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
     update();
   });
   animationTimer->start(totalFrames * 11); // 440 milliseconds per loop; syncs up perfectly with my 2019 Lexus ES 350 turn signal clicks
-
-  // screen recoder - neokii
-  record_timer = std::make_shared<QTimer>();
-  QObject::connect(record_timer.get(), &QTimer::timeout, [this] {
-    if (recorder) {
-      recorder->update_screen();
-    }
-  });
-  record_timer->start(1000 / UI_FREQ);
-
-  QWidget *recorder_widget = new QWidget(this);
-  QVBoxLayout *recorder_layout = new QVBoxLayout(recorder_widget);
-
-  recorder_layout->setMargin(35);
-  recorder = new ScreenRecorder(this);
-  recorder_layout->addWidget(recorder);
-  recorder_layout->setAlignment(recorder, Qt::AlignRight | Qt::AlignCenter);
-
-  main_layout->addWidget(recorder_widget);
-  recorder_widget->raise();
 }
 
 void AnnotatedCameraWidget::updateState(const UIState &s) {
@@ -791,12 +794,6 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   // Turn signal animation
   if (customSignals && (turnSignalLeft || turnSignalRight)) {
     drawTurnSignals(p);
-  }
-
-  UIState *s = uiState();
-  if ((speed > 0.3 && !s->scene.rec_stat) || (speed == 0 && s->scene.rec_stat)) {
-    if (recorder) recorder->toggle();
-    s->scene.rec_stat = !s->scene.rec_stat;
   }
 }
 

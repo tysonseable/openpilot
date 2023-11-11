@@ -191,10 +191,6 @@ private:
   std::unordered_map<int, std::pair<QString, std::pair<QColor, std::map<double, QBrush>>>> themeConfiguration;
   std::vector<QPixmap> signalImgVector;
 
-  // neokii screen recorder. thx for sharing your source. 
-  std::shared_ptr<QTimer> record_timer;
-  ScreenRecorder *recorder;
-
 protected:
   void paintGL() override;
   void initializeGL() override;
@@ -239,6 +235,10 @@ private:
   const UIScene &scene;
   QPoint timeoutPoint = QPoint(420, 69);
   QTimer clickTimer;
+
+  // neokii screen recorder. thx for sharing your source. 
+  std::shared_ptr<QTimer> record_timer;
+  ScreenRecorder *recorder;
 
 private slots:
   void offroadTransition(bool offroad);
