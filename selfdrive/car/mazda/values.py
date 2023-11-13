@@ -349,3 +349,6 @@ DBC = {
 
 # Gen 1 hardware: same CAN messages and same camera
 GEN1 = {CAR.CX5, CAR.CX9, CAR.CX9_2021, CAR.MAZDA3, CAR.MAZDA6, CAR.CX5_2022}
+
+if __name__ == "__main__":
+  print("\n".join(v for m, v in vars(CAR).items() if not m.startswith("_")))
