@@ -15,7 +15,7 @@ def get_car_names(dir_path):
   return sorted(names)
 
 def main():
-  Params().put("CarModels", ','.join(get_car_names('/data/openpilot/selfdrive/car')))
+  Params().put("CarModels", ','.join(get_car_names('../car')))
 
 if __name__ == "__main__":
   main()

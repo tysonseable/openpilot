@@ -142,7 +142,7 @@ FrogPilotVehiclesPanel::FrogPilotVehiclesPanel(QWidget *parent) : FrogPilotPanel
   forceFingerprintLayout->addWidget(forceFingerprintButton);
 
   connect(forceFingerprintButton, &ButtonControl::clicked, this, [=]() {
-    std::system("python3 /data/openpilot/scripts/set_fingerprints.py");
+    std::system("python3 ../../scripts/set_fingerprints.py");
     std::string carModels = params.get("CarModels");
 
     QStringList cars = QString::fromStdString(carModels).split(',');
