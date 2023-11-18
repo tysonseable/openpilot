@@ -595,6 +595,12 @@ void FrogPilotPanel::setParams() {
     {"VisionTurnControl", "1"},
     {"WheelIcon", "1"},
     {"WideCameraOff", "1"}
+    // Tuning
+    {"LatAngleFactor", ""},
+    {"LatAccelFactor", ""},
+    {"LatAccelOffset", ""},
+    {"Friction", ""},
+    {"SteerDelay", ""},
   };
 
   bool rebootRequired = false;
@@ -627,19 +633,21 @@ BehaviorPanel::BehaviorPanel(QWidget *parent) : ListWidget(parent){
   // Add sliders here
   // name, label, units, min, max, default, setter function
   std::vector<SliderDefinition> slider_defs{
-    {
-      "AccelCruiseMin", tr("Minimum Cruise Accel:"), "m/s<sup>2</sup>", -3.0, 0.0, -1.2,
+    {"LatAngleFactor", tr("Steering Angle Factor:"), "Coef.", 0.0, 0.3, 0.14,
     },
-    {
-      "AccelCruiseMaxFactor", tr("Cruise Accel Factor:"), "Coef.", 0.0, 3, 1,
+    {"LatAccelFactor", tr("Lateral Accel Factor:"), "Coef.", 0.0, 4.0, 1.0,
+    },
+    {"LatAccelOffset", tr("Lateral Accel Offset:"), "Coef.", -0.4, 0.4, 0.0,
+    },
+    {"Friction", tr("Friction:"), "Coef.", 0.0, 0.5, 0.2,
+    },
+    {"SteerDelay", tr("Steer Delay:"), "Sec.", 0.0, 0.5, 0.1,
     },
   };
   
   // Loop through the slider definitions and create sliders
   for (const auto &slider_def : slider_defs) {
     QString param = slider_def.paramName;
-
-
 
     CustomSlider *slider = new CustomSlider(param, \
                                             slider_def.unit, \
@@ -651,7 +659,6 @@ BehaviorPanel::BehaviorPanel(QWidget *parent) : ListWidget(parent){
     sliders[param] = slider; // Store the slider pointer in the map
     sliderItems[param.toStdString()] = slider->getSliderItem(); // Store the slider item pointer in the map
     addItem(slider->getSliderItem()); // Add the slider item to the list widget
-
   }
 
   // create a pubmaster for all the sliders
