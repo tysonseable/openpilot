@@ -3,12 +3,6 @@
 #include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 #include "selfdrive/ui/qt/util.h"
 
-static long long milliseconds() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return (static_cast<long long>(tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
-}
-
 ScreenRecorder::ScreenRecorder(QWidget *parent)
   : QPushButton(parent), image_queue(30), recording(false), started(0), frame(0),
     screen_width(2160), screen_height(1080) {
@@ -99,11 +93,11 @@ void ScreenRecorder::start() {
   encoding_thread = std::thread(&ScreenRecorder::encoding_thread_func, this);
 
   update();
-  started = milliseconds();
+  started = nanos_since_epoch();
 }
 
 void ScreenRecorder::encoding_thread_func() {
-  uint64_t start_time = nanos_since_boot() - 1;
+  uint64_t start_time = nanos_since_boot() - 1U;
   while (recording && encoder) {
     QImage popImage;
     if (image_queue.pop_wait_for(popImage, std::chrono::milliseconds(10))) {
@@ -114,7 +108,7 @@ void ScreenRecorder::encoding_thread_func() {
                         recording_width, recording_height,
                         libyuv::kFilterLinear);
       encoder->encode_frame_rgba(rgb_scale_buffer.get(), recording_width, recording_height, 
-                                 static_cast<uint64_t>(nanos_since_boot() - start_time));
+                                (nanos_since_boot() - start_time));
     }
   }
 }
@@ -134,7 +128,7 @@ void ScreenRecorder::stop() {
 void ScreenRecorder::update_screen() {
   if (!recording) return;
 
-  if (milliseconds() - started > 1000 * 60 * 3) {
+  if (nanos_since_epoch() - started > 3e+9*60*3) {
     stop();
     start();
     return;

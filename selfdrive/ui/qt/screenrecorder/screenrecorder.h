@@ -38,7 +38,7 @@ private:
   int frame = 0;
   int recording_width, recording_height;
   int screen_width = 2160, screen_height = 1080;
-  long long started = 0;
+  uint64_t started = 0;
   std::unique_ptr<OmxEncoder> encoder;
   std::unique_ptr<uint8_t[]> rgb_scale_buffer;
   std::thread encoding_thread;
