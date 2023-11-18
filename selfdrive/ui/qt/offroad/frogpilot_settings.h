@@ -5,6 +5,9 @@
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/qt/widgets/input.h"
 #include "selfdrive/ui/ui.h"
+#include <QSlider>
+
+
 
 static const QString buttonStyle = R"(
   QPushButton {
@@ -433,4 +436,92 @@ ParamController(TurnAggressiveness, "TurnAggressiveness", "   Turn Speed Aggress
   return QString::number(params.getInt("TurnAggressiveness")) + "%";,
   return std::clamp(v, 1, 200);
 )
+
+
+class CustomSlider : public QSlider {
+  Q_OBJECT
+
+public:
+
+  CustomSlider(const QString &param, 
+               const QString &unit, const QString &title, 
+               double paramMin, double paramMax, double defaultVal, 
+               QWidget *parent = nullptr);
+
+
+  QWidget *getSliderItem() {
+    return sliderItem;
+  };
+  QString param;
+  double paramMin;
+  double paramMax;
+  int sliderMin = 0;
+  int sliderMax = 10000;
+
+signals:
+  void sliderReleasedWithValue(int value);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event) override {
+    QSlider::mouseReleaseEvent(event);
+    emit sliderReleasedWithValue(value());
+  }
+
+private:
+  void initialize();
+  
+
+  double defaultVal;
+  double scaleFactor;
+  
+  QString title;
+  QString unit;
+
+  QWidget *sliderItem;
+  QLabel *label;
+  
+  int sliderRange = sliderMax - sliderMin;
+
+  QString SliderStyle = R"(
+    QSlider::groove:horizontal 
+      {border: none;height: 60px;background-color: #393939;border-radius: 30px;}
+    QSlider::handle:horizontal 
+      {background-color: #fafafa;border: none;width: 80px;height: 80px;margin-top: -10px;margin-bottom: -10px;border-radius: 40px;}
+  )";
+  QString lockedSliderStyle = R"(
+    QSlider::groove:horizontal 
+      {border: none;height: 60px;background-color: #393939;border-radius: 30px;}
+    QSlider::handle:horizontal 
+      {background-color: #787878;border: none;width: 80px;height: 80px;margin-top: -10px;margin-bottom: -10px;border-radius: 40px;}
+  )";
+  // label
+  QString LabelStyle = R"(
+    QLabel {
+      color: #fafafa;
+    }
+  )";
+  QString lockedLabelStyle = R"(
+    QLabel {
+      color: #787878;
+    }
+  )";
+};
+
+
+
+class BehaviorPanel : public ListWidget {
+  Q_OBJECT
+
+public:
+  explicit BehaviorPanel(QWidget *parent = nullptr);
+
+public slots:
+    void sendAllSliderValues();
+
+private:
+  Params params;
+  std::map<std::string, QWidget *> sliderItems;
+  QMap<QString, CustomSlider *> sliders;
+  QTimer *timer;
+};
 

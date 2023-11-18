@@ -213,6 +213,9 @@ FrogPilotVehiclesPanel::FrogPilotVehiclesPanel(QWidget *parent) : FrogPilotPanel
     if (key != std::get<0>(toyotaToggles.back())) mainLayout->addWidget(horizontalLine());
   }
 
+  BehaviorPanel *tuning = new BehaviorPanel();
+  mainLayout->addWidget(tuning);
+
   setInitialToggleStates();
 }
 
@@ -608,4 +611,161 @@ void FrogPilotPanel::setParams() {
     }
     Hardware::reboot();
   }
+}
+
+
+
+BehaviorPanel::BehaviorPanel(QWidget *parent) : ListWidget(parent){
+  struct SliderDefinition {
+    QString paramName;
+    QString title;
+    QString unit;
+    double paramMin;
+    double paramMax;
+    double defaultVal;
+};
+  // Add sliders here
+  // name, label, units, min, max, default, setter function
+  std::vector<SliderDefinition> slider_defs{
+    {
+      "AccelCruiseMin", tr("Minimum Cruise Accel:"), "m/s<sup>2</sup>", -3.0, 0.0, -1.2,
+    },
+    {
+      "AccelCruiseMaxFactor", tr("Cruise Accel Factor:"), "Coef.", 0.0, 3, 1,
+    },
+  };
+  
+  // Loop through the slider definitions and create sliders
+  for (const auto &slider_def : slider_defs) {
+    QString param = slider_def.paramName;
+
+
+
+    CustomSlider *slider = new CustomSlider(param, \
+                                            slider_def.unit, \
+                                            slider_def.title, \
+                                            slider_def.paramMin, \
+                                            slider_def.paramMax,  \
+                                            slider_def.defaultVal,  \
+                                            this);
+    sliders[param] = slider; // Store the slider pointer in the map
+    sliderItems[param.toStdString()] = slider->getSliderItem(); // Store the slider item pointer in the map
+    addItem(slider->getSliderItem()); // Add the slider item to the list widget
+
+  }
+
+  // create a pubmaster for all the sliders
+  
+
+  timer = new QTimer(this);
+  timer->setInterval(1000); // Send all slider values every interval
+  timer->start();
+
+  connect(timer, &QTimer::timeout, this, &BehaviorPanel::sendAllSliderValues);
+}
+
+void BehaviorPanel::sendAllSliderValues()
+{
+  // Iterate through all sliders and call their setter functions
+  for (const auto &slider : sliders)
+  {
+    double dValue = slider->paramMin + (slider->paramMax - slider->paramMin) * (slider->value() - slider->sliderMin) / (slider->sliderMax - slider->sliderMin);
+    params.put(slider->param.toStdString(), std::to_string(dValue));
+  }
+}
+
+CustomSlider::CustomSlider(const QString &param,  
+                           const QString &unit,
+                           const QString &title, 
+                           double paramMin, 
+                           double paramMax, 
+                           double defaultVal, 
+                           QWidget *parent) // Define the constructor
+                          : // Call the base class constructor
+                          QSlider(Qt::Horizontal, parent),
+                          param(param), title(title), unit(unit),
+                          paramMin(paramMin), paramMax(paramMax), defaultVal(defaultVal)
+                          {initialize();} // End of constructor
+
+void CustomSlider::initialize()
+{
+  // Create UI elements
+  sliderItem = new QWidget(parentWidget()); // Create a new widget
+  // Create a vertical layout to stack the title and reset button on top of the slider
+  QVBoxLayout *mainLayout = new QVBoxLayout(sliderItem); 
+  // Create a horizontal layout to put the title and reset on left and right respectively
+  QHBoxLayout *titleLayout = new QHBoxLayout();
+  mainLayout->addLayout(titleLayout);
+
+  // Create the title label
+  label = new QLabel(title);
+  label->setStyleSheet(LabelStyle);
+  label->setTextFormat(Qt::RichText);
+  titleLayout->addWidget(label, 0, Qt::AlignLeft);
+
+  // Create the reset button
+  ButtonControl *resetButton = new ButtonControl("  ", tr("RESET"));
+  titleLayout->addWidget(resetButton, 0, Qt::AlignRight);
+  // Connect the reset button to set the slider value to the default value
+  connect(resetButton, &ButtonControl::clicked, [&]() {
+    if (ConfirmationDialog::confirm(tr("Are you sure you want to reset ") + param + "?", tr("Reset"), this)) {
+      this->setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
+    } 
+  });
+  
+  // slider settings
+  setFixedHeight(100);
+  setMinimum(sliderMin);
+  setMaximum(sliderMax);
+
+  // Set the default value of the slider to begin with
+  setValue(sliderMin + (defaultVal - paramMin) / (paramMax - paramMin) * (sliderRange));
+  label->setText(title + " " + QString::number(defaultVal, 'f', 2) + " " + unit);
+
+  try // Try to get the value of the param from params. If it doesn't exist, catch the error
+  {
+    QString valueStr = QString::fromStdString(Params().get(param.toStdString()));
+    double value = QString(valueStr).toDouble();
+    // Set the value of the param in the behavior struct
+    //TODO
+
+    setValue(sliderMin + (value - paramMin) / (paramMax - paramMin) * (sliderRange)); // Set the value of the slider. The value is scaled to the slider range
+    label->setText(title + " " + QString::number(value, 'f', 2) + " " + unit);
+    
+    // Set the slider to be enabled or disabled depending on the lock status
+    bool locked = Params().getBool((param + "Lock").toStdString());
+    setEnabled(!locked);
+    setStyleSheet(locked ? lockedSliderStyle : SliderStyle);
+    label->setStyleSheet(locked ? lockedLabelStyle : LabelStyle);
+
+  }
+  catch (const std::invalid_argument &e)
+  {
+    // Handle the error, e.g. lock the slider and display an error message as the label
+    setValue(0);
+    label->setText(title + "Error: Param not found. Add param to behaviord");
+    setEnabled(false);
+    setStyleSheet(lockedSliderStyle);
+  }
+
+  mainLayout->addWidget(this);
+
+  connect(this, &CustomSlider::valueChanged, [=](int value)
+  {
+    // Update the label as the slider is moved. Don't save the value to params here
+    double dValue = paramMin + (paramMax - paramMin) * (value - sliderMin) / (sliderRange);
+    label->setText(title + " " + QString::number(dValue, 'f', 2) + " " + unit); 
+    
+  });
+
+  connect(this, &CustomSlider::sliderReleasedWithValue, [this]() {
+    // Call the sendAllSliderValues method from the BehaviorPanel
+    auto parentBehaviorPanel = qobject_cast<BehaviorPanel *>(this->parentWidget());
+    if (parentBehaviorPanel)
+    {
+      parentBehaviorPanel->sendAllSliderValues();
+    }
+  });
+
+
 }
