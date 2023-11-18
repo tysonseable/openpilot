@@ -3,6 +3,14 @@ import json
 Import('qt_env', 'arch', 'common', 'messaging', 'visionipc',
        'cereal', 'transformations')
 
+def is_running_on_wsl():
+  try:
+    with open('/proc/version', 'r') as f:
+      contents = f.read()
+    return 'WSL2' in contents
+  except FileNotFoundError:
+    return False
+
 base_libs = [common, messaging, cereal, visionipc, transformations, 'zmq',
              'capnp', 'kj', 'm', 'OpenCL', 'ssl', 'crypto', 'pthread', 'OmxCore', 'avformat', 'avcodec', 'avutil', 'yuv'] + qt_env["LIBS"]
 
@@ -43,6 +51,14 @@ qt_src = ["main.cc", "qt/sidebar.cc", "qt/onroad.cc", "qt/body.cc",
           "qt/offroad/software_settings.cc", "qt/offroad/onboarding.cc",
           "qt/offroad/driverview.cc", "qt/offroad/experimental_mode.cc",
           "qt/screenrecorder/omx_encoder.cc", "qt/screenrecorder/screenrecorder.cc"]
+
+if is_running_on_wsl():
+  qt_env.Append(CXXFLAGS=['-DWSL2'])
+  base_libs.remove('OmxCore')
+  qt_libs.remove('OmxCore')
+  qt_src.remove("qt/screenrecorder/screenrecorder.cc")
+  qt_src.remove("qt/screenrecorder/omx_encoder.cc")
+  print("Building for WSL2. Removing Screen Recorder")
 
 # build translation files
 with open(File("translations/languages.json").abspath) as f:
