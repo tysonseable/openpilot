@@ -58,7 +58,7 @@ class CarInterface(CarInterfaceBase):
         ret.flags |= MazdaFlags.RADAR_INTERCEPT_MODE.value
         ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_RADAR_INTERCEPT_MODE
         if p.get_bool("MazdaUseCrzEvents"):
-          ret.flags |= MazdaFlags.RI_USE_CRZ_EVENTS
+          ret.flags |= MazdaFlags.RI_USE_CRZ_EVENTS.value
           ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_RI_USE_CRZ_EVENTS
     
     if candidate in GEN2:
