@@ -5,8 +5,7 @@ from openpilot.common.conversions import Conversions as CV
 from opendbc.can.can_define import CANDefine
 from opendbc.can.parser import CANParser
 from openpilot.selfdrive.car.interfaces import CarStateBase
-from openpilot.selfdrive.car.mazda.values import DBC, LKAS_LIMITS, GEN1, GEN2, TI_STATE, CAR, CarControllerParams
-
+from openpilot.selfdrive.car.mazda.values import DBC, LKAS_LIMITS, GEN1, GEN2, TI_STATE, CAR, CarControllerParams, MazdaFlags
 class CarState(CarStateBase):
   def __init__(self, CP):
     super().__init__(CP)
@@ -21,6 +20,8 @@ class CarState(CarStateBase):
     self.lkas_disabled = False
     self.cam_lkas = 0
     self.params = CarControllerParams(CP)
+    self.radar_intercept_mode = CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE
+    self.use_crz_events =  CP.flags & MazdaFlags.RI_USE_CRZ_EVENTS
     
     self.ti_ramp_down = False
     self.ti_version = 1
@@ -154,8 +155,19 @@ class CarState(CarStateBase):
 
     # TODO: the signal used for available seems to be the adaptive cruise signal, instead of the main on
     #       it should be used for carState.cruiseState.nonAdaptive instead
-    ret.cruiseState.available = cp_cam.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
-    ret.cruiseState.enabled = cp_cam.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1      
+    
+    if self.radar_intercept_mode: # ri harness installed
+      ret.cruiseState.available = cp_cam.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
+      self.crz_info = copy.copy(cp_cam.vl["CRZ_INFO"])
+      self.crz_cntr = copy.copy(cp_cam.vl["CRZ_CTRL"])
+      if self.use_crz_events:
+        ret.cruiseState.enabled = cp.vl["CRZ_EVENTS"]["CRUISE_ACTIVE_CAR_MOVING"] == 1
+      else:
+        ret.cruiseState.enabled = cp_cam.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1      
+    else: # normal mode without ri harness
+      ret.cruiseState.available = cp.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
+      ret.cruiseState.enabled = cp.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1
+      
     ret.cruiseState.standstill = cp.vl["PEDALS"]["STANDSTILL"] == 1
     ret.cruiseState.speed = cp.vl["CRZ_EVENTS"]["CRZ_SPEED"] * CV.KPH_TO_MS
 
@@ -178,8 +190,6 @@ class CarState(CarStateBase):
     #TODO use copy.copy() instead
     self.cp_cam = cp_cam
     self.cp = cp
-    self.crz_info = copy.copy(cp_cam.vl["CRZ_INFO"])
-    self.crz_cntr = copy.copy(cp_cam.vl["CRZ_CTRL"])
 
     return ret
   
@@ -226,7 +236,7 @@ class CarState(CarStateBase):
         ("GEAR", 20),
         ("BSM", 10),
       ]
-      if not CP.experimentalLongitudinalAvailable:
+      if not (CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE):
         messages += [
           ("CRZ_CTRL", 50),
       ]
@@ -254,7 +264,7 @@ class CarState(CarStateBase):
         ("CAM_LKAS", 16),
       ]
     # gen1 radar
-    if CP.experimentalLongitudinalAvailable:
+    if (CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE):
       messages += [
         ("CRZ_CTRL",50),
         ("CRZ_INFO",50),

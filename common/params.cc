@@ -185,7 +185,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"PandaHeartbeatLost", CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION},
     {"OpenpilotLongitudinalControl", PERSISTENT},
     {"PandaSignatures", CLEAR_ON_MANAGER_START},
-    {"RadarPassthrough", PERSISTENT},
     {"Passive", PERSISTENT},
     {"PrimeType", PERSISTENT},
     {"RecordFront", PERSISTENT},
@@ -213,6 +212,10 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"Version", PERSISTENT},
     {"VisionRadarToggle", PERSISTENT},
     {"WheeledBody", PERSISTENT},
+    // Radar Debug
+    {"RadarInterceptWiring", PERSISTENT},
+    {"OpenPilotRadarPassthrough", PERSISTENT},
+    {"PandaRadarPassthrough", PERSISTENT},
 };
 
 } // namespace

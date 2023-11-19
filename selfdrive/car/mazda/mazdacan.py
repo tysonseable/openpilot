@@ -164,7 +164,7 @@ def create_button_cmd(packer, car_fingerprint, counter, button):
 
     return packer.make_can_msg("CRZ_BTNS", 0, values)
 
-def create_radar_command(packer, car_fingerprint, frame, CC, CS):
+def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
   accel = 0
   ret = []
   crz_ctrl = CS.crz_cntr
@@ -177,7 +177,7 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS):
     accel = int(crz_info["ACCEL_CMD"])
 
   if car_fingerprint in GEN1:
-    passthrough = Params().get_bool("RadarPassthrough")
+    passthrough = params.get_bool("OpenPilotRadarPassthrough")
     if not passthrough:
       crz_info["ACC_ACTIVE"] = int(CC.longActive)
       crz_info["ACC_SET_ALLOWED"] = int(bool(int(CS.cp.vl["GEAR"]["GEAR"]) & 4)) # we can set ACC_SET_ALLOWED bit when in drive. Allows crz to be set from 1kmh.

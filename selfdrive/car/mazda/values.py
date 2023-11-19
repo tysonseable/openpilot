@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import StrEnum, IntFlag
 from typing import Dict, List, Union
 
 from cereal import car
@@ -45,7 +45,10 @@ class TI_STATE:
   DRIVER_OVER = 2
   RUN = 3
   
-
+class MazdaFlags(IntFlag):
+  RADAR_INTERCEPT_MODE = 1
+  RI_USE_CRZ_EVENTS = 2
+  
 class CAR(StrEnum):
   CX5 = "MAZDA CX-5"
   CX9 = "MAZDA CX-9"

@@ -28,9 +28,21 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
   std::vector<std::tuple<QString, QString, QString, QString>> toggle_defs{
     {
-      "RadarPassthrough",
-      tr("Radar Passthrough"),
-      tr("RadarPassthrough"),
+      "OpenPilotRadarPassthrough",
+      tr("OpenPilot Radar Passthrough"),
+      tr("Dynamically switchable value to modify the radar signals in mazdacan.py"),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
+      "RadarInterceptWiring",
+      tr("Radar Intercept Wiring Harness"),
+      tr("Turn this on if you have a radar intercept harness installed. Car restart required"),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
+      "PandaRadarPassthrough",
+      tr("Panda Radar Passthrough"),
+      tr("Changes the panda code to directly forward the radar signals without openpilot affecting them. Set OpenPilot Radar Passthrough Param aswell. Car restart required"),
       "../assets/offroad/icon_openpilot.png",
     },
     {

@@ -2,8 +2,9 @@ from cereal import car
 from opendbc.can.packer import CANPacker
 from openpilot.selfdrive.car import apply_driver_steer_torque_limits, apply_ti_steer_torque_limits
 from openpilot.selfdrive.car.mazda import mazdacan
-from openpilot.selfdrive.car.mazda.values import CarControllerParams, Buttons, GEN1
+from openpilot.selfdrive.car.mazda.values import CarControllerParams, Buttons, GEN1, MazdaFlags
 from openpilot.common.realtime import ControlsTimer as Timer
+from openpilot.common.params import Params
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
@@ -17,12 +18,13 @@ class CarController:
     self.packer = CANPacker(dbc_name)
     self.brake_counter = 0
     self.frame = 0
-    self.params = CarControllerParams(CP)
+    self.ccp = CarControllerParams(CP)
     self.hold_timer = Timer(6.0)
     self.hold_delay = Timer(1.0) # delay before we start holding as to not hit the brakes too hard
     self.resume_timer = Timer(0.5)
     self.cancel_delay = Timer(0.07) # 70ms delay to try to avoid a race condition with stock system
-      
+    self.p = Params()
+    
   def update(self, CC, CS, now_nanos):
     can_sends = []
 
@@ -33,13 +35,13 @@ class CarController:
       # calculate steer and also set limits due to driver torque
       if CS.CP.enableTorqueInterceptor:
         if CS.ti_lkas_allowed:
-          ti_new_steer = int(round(CC.actuators.steer * self.params.TI_STEER_MAX))
+          ti_new_steer = int(round(CC.actuators.steer * self.ccp.TI_STEER_MAX))
           ti_apply_steer = apply_ti_steer_torque_limits(ti_new_steer, self.ti_apply_steer_last,
-                                                    CS.out.steeringTorque, self.params)
+                                                    CS.out.steeringTorque, self.ccp)
 
-      new_steer = int(round(CC.actuators.steer * self.params.STEER_MAX))
+      new_steer = int(round(CC.actuators.steer * self.ccp.STEER_MAX))
       apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last,
-                                                     CS.out.steeringTorque, self.params)
+                                                     CS.out.steeringTorque, self.ccp)
     self.apply_steer_last = apply_steer
     self.ti_apply_steer_last = ti_apply_steer
     
@@ -77,10 +79,11 @@ class CarController:
                                                         self.frame, ti_apply_steer))
       can_sends.append(mazdacan.create_steering_control(self.packer, self.CP.carFingerprint,
                                                       self.frame, apply_steer, CS.cam_lkas))
-      """ACC RADAR COMMAND"""                                                    
-      if self.frame % 2 == 0:
-        print("In carcontroller, calling create_radar_command")
-        can_sends.extend(mazdacan.create_radar_command(self.packer, CS.CP.carFingerprint, self.frame, CC, CS))
+      if self.CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE:
+        """ACC RADAR COMMAND"""                                                    
+        if self.frame % 2 == 0:
+          print("In carcontroller, calling create_radar_command")
+          can_sends.extend(mazdacan.create_radar_command(self.packer, CS.CP.carFingerprint, self.frame, CC, CS, self.p))
 
     else:
       resume = False
@@ -111,7 +114,7 @@ class CarController:
                                                       self.frame, apply_steer, CS.cam_lkas))
 
     new_actuators = CC.actuators.copy()
-    new_actuators.steer = apply_steer / self.params.STEER_MAX
+    new_actuators.steer = apply_steer / self.ccp.STEER_MAX
     new_actuators.steerOutputCan = apply_steer
 
     self.frame += 1

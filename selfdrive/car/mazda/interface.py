@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from cereal import car
+from panda import Panda
 from openpilot.common.conversions import Conversions as CV
-from openpilot.selfdrive.car.mazda.values import CAR, LKAS_LIMITS, GEN2, GEN1
+from openpilot.selfdrive.car.mazda.values import MazdaFlags, CAR, LKAS_LIMITS, GEN2, GEN1
 from openpilot.selfdrive.car import get_safety_config
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase, TorqueFromLateralAccelCallbackType, FRICTION_THRESHOLD
 from openpilot.selfdrive.controls.lib.drive_helpers import get_friction
@@ -32,22 +33,34 @@ class CarInterface(CarInterfaceBase):
   @staticmethod
   def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "mazda"
+    ret.radarUnavailable = True
 
     if candidate in GEN1:
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.mazda)]
       ret.steerActuatorDelay = 0.1
-      ret.experimentalLongitudinalAvailable = True
+      
       ret.openpilotLongitudinalControl = experimental_long
-      ret.longitudinalTuning.kpBP = [0., 5., 30.]
-      ret.longitudinalTuning.kpV = [1.3, 1.0, 0.7]
-      ret.longitudinalTuning.kiBP = [0., 5., 20., 30.]
-      ret.longitudinalTuning.kiV = [0.36, 0.23, 0.17, 0.1]
-      ret.longitudinalTuning.deadzoneBP = [0.0, 30.0]
-      ret.longitudinalTuning.deadzoneV = [0.0, 0.03]
-      ret.longitudinalActuatorDelayLowerBound = 0.3
-      ret.longitudinalActuatorDelayUpperBound = 1.5
-      ret.startingState = True
-
+      
+      p = Params()
+      if p.get_bool('RadarInterceptWiring'):
+        ret.experimentalLongitudinalAvailable = True
+        ret.radarUnavailable = False
+        ret.longitudinalTuning.kpBP = [0., 5., 30.]
+        ret.longitudinalTuning.kpV = [1.3, 1.0, 0.7]
+        ret.longitudinalTuning.kiBP = [0., 5., 20., 30.]
+        ret.longitudinalTuning.kiV = [0.36, 0.23, 0.17, 0.1]
+        ret.longitudinalTuning.deadzoneBP = [0.0, 30.0]
+        ret.longitudinalTuning.deadzoneV = [0.0, 0.03]
+        ret.longitudinalActuatorDelayLowerBound = 0.3
+        ret.longitudinalActuatorDelayUpperBound = 1.5
+        ret.startingState = True
+        
+        ret.flags |= MazdaFlags.RADAR_INTERCEPT_MODE.value
+        ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_RADAR_INTERCEPT_MODE
+        if p.get_bool("MazdaUseCrzEvents"):
+          ret.flags |= MazdaFlags.RI_USE_CRZ_EVENTS
+          ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_RI_USE_CRZ_EVENTS
+    
     if candidate in GEN2:
       ret.experimentalLongitudinalAvailable = True
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.mazda2019)]
@@ -60,11 +73,8 @@ class CarInterface(CarInterfaceBase):
       ret.longitudinalTuning.kiV = [0.1, 0.1]
       ret.startingState = True
       ret.steerActuatorDelay = 0.3
-      
-    ret.radarUnavailable = True
 
     ret.dashcamOnly = False
-
     
     ret.steerLimitTimer = 0.8
     ret.tireStiffnessFactor = 0.70   # not optimized yet
