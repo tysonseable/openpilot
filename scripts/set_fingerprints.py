@@ -1,6 +1,7 @@
 import os
 import re
 from openpilot.common.params import Params
+from openpilot.common.basedir import BASEDIR
 
 def get_car_names(dir_path):
   names = []
@@ -15,7 +16,7 @@ def get_car_names(dir_path):
   return sorted(names)
 
 def main():
-  Params().put("CarModels", ','.join(get_car_names('/data/openpilot/selfdrive/car')))
+  Params().put("CarModels", ','.join(get_car_names(f'{BASEDIR}/openpilot/selfdrive/car')))
 
 if __name__ == "__main__":
   main()

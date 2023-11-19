@@ -1,5 +1,7 @@
 import os
 import json
+from openpilot.common.basedir import BASEDIR
+
 Import('qt_env', 'arch', 'common', 'messaging', 'visionipc',
        'cereal', 'transformations')
 
@@ -43,6 +45,8 @@ qt_src = ["main.cc", "qt/sidebar.cc", "qt/onroad.cc", "qt/body.cc",
           "qt/offroad/software_settings.cc", "qt/offroad/onboarding.cc",
           "qt/offroad/driverview.cc", "qt/offroad/experimental_mode.cc",
           "qt/screenrecorder/omx_encoder.cc", "qt/screenrecorder/screenrecorder.cc"]
+
+qt_env.Append(CXXFLAGS=['-DBASEDIR=\\"' + BASEDIR + '\\"'])
 
 # build translation files
 with open(File("translations/languages.json").abspath) as f:
