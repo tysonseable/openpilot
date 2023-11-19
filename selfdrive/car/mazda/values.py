@@ -182,6 +182,7 @@ FW_VERSIONS = {
       b'PX42-188K2-C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
       b'PX68-188K2-B\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
       b'SHKT-188K2-D\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+      b'PYNB-188K2-E\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
     ],
     (Ecu.fwdRadar, 0x764, None): [
       b'K123-67XK2-F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
@@ -478,12 +479,12 @@ FW_VERSIONS = {
 
 
 DBC = {
-  CAR.CX5: dbc_dict('mazda_2017', None),
-  CAR.CX9: dbc_dict('mazda_2017', None),
-  CAR.MAZDA3: dbc_dict('mazda_2017', None),
-  CAR.MAZDA6: dbc_dict('mazda_2017', None),
-  CAR.CX9_2021: dbc_dict('mazda_2017', None),
-  CAR.CX5_2022: dbc_dict('mazda_2017', None),
+  CAR.CX5: dbc_dict('mazda_2017', 'mazda_radar'),
+  CAR.CX9: dbc_dict('mazda_2017', 'mazda_radar'),
+  CAR.MAZDA3: dbc_dict('mazda_2017', 'mazda_radar'),
+  CAR.MAZDA6: dbc_dict('mazda_2017', 'mazda_radar'),
+  CAR.CX9_2021: dbc_dict('mazda_2017', 'mazda_radar'),
+  CAR.CX5_2022: dbc_dict('mazda_2017', 'mazda_radar'),
   CAR.MAZDA3_2019: dbc_dict('mazda_2019', None),
   CAR.CX_30: dbc_dict('mazda_2019', None),
   CAR.CX_50: dbc_dict('mazda_2019', None),

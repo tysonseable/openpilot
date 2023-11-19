@@ -28,6 +28,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
   std::vector<std::tuple<QString, QString, QString, QString>> toggle_defs{
     {
+      "RadarPassthrough",
+      tr("Radar Passthrough"),
+      tr("RadarPassthrough"),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
       "OpenpilotEnabledToggle",
       tr("Enable openpilot"),
       tr("Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off."),
