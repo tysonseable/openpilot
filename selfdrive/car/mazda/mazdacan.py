@@ -191,19 +191,123 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
     
     ret.append(packer.make_can_msg("CRZ_INFO", 0, crz_info))
     ret.append(packer.make_can_msg("CRZ_CTRL", 0, crz_ctrl))
-
     if (frame % 10 == 0):
-      for addr in range(361,367):
-        addr_name = f"RADAR_{addr}"
-        msg = CS.cp_cam.vl[addr_name]
-        values = {
-          "MSGS_1" : int(msg["MSGS_1"]),
-          "MSGS_2" : int(msg["MSGS_2"]),
-          "CTR"    : int(msg["CTR"])
-        } 
+      if params.get_bool("SendRadarTracks"):
+        for addr in range(361,367):
+          addr_name = f"RADAR_{addr}"
+          msg = CS.cp_cam.vl[addr_name]
+          values = {
+            "MSGS_1" : int(msg["MSGS_1"]),
+            "MSGS_2" : int(msg["MSGS_2"]),
+            "CTR"    : int(msg["CTR"]) #frame % 16
+          }
+          if params.get_bool("StaticRadarTracks"):
+            values = {
+              "MSGS_1" : static_data_list[i],
+              "MSGS_2" : static_data_list[i],
+              "CTR"    : int(msg["CTR"]) #frame % 16
+            }
+
+
         ret.append(packer.make_can_msg(addr_name, 0, values))
 
   return ret
+
+
+STATIC_DATA_21B = [0x01FFE000, 0x00000000]
+STATIC_DATA_361 = [0xFFF7FEFE, 0x1FC00080]
+STATIC_DATA_362 = [0xFFF7FEFE, 0x1FC00000]
+STATIC_DATA_363 = [0xFFF7FEFE, 0x1FC00000]
+STATIC_DATA_364 = [0xFFF7FEFE, 0x1FC00000]
+STATIC_DATA_365 = [0xFFF7FE7F, 0xFBFF3FC0]
+STATIC_DATA_366 = [0xFFF7FE7F, 0xFBFF3FC0]
+static_data_list = [STATIC_DATA_361, STATIC_DATA_362, STATIC_DATA_363, STATIC_DATA_364, STATIC_DATA_365, STATIC_DATA_366]
+
+# BO_ 539 CRZ_INFO: 8 XXX
+#  SG_ STATUS : 7|8@0+ (1,0) [0|255] "" XXX
+#  SG_ STATIC_1 : 15|11@0+ (1,0) [0|2047] "" XXX
+#  SG_ ACCEL_CMD : 17|13@0+ (1,-4096) [0|8191] "" XXX
+#  SG_ STATIC_2 : 18|3@1+ (1,0) [0|7] "" XXX
+#  SG_ ACC_ACTIVE : 33|1@0+ (1,0) [0|1] "" XXX
+#  SG_ ACC_SET_ALLOWED : 34|1@0+ (1,0) [0|1] "" XXX
+#  SG_ CRZ_ENDED : 36|1@0+ (1,0) [0|255] "" XXX
+#  SG_ MYSTERY_BIT : 47|1@0+ (1,0) [0|255] "" XXX
+#  SG_ COUNTER : 51|4@0+ (1,0) [0|255] "" XXX
+#  SG_ CHECKSUM : 56|8@1+ (1,0) [0|255] "" XXX
+# 
+# BO_ 540 CRZ_CTRL: 8 XXX
+#  SG_ NEW_SIGNAL_2 : 2|11@0+ (1,0) [0|1] "" XXX
+#  SG_ CRZ_ACTIVE : 3|1@0+ (1,0) [0|1] "" XXX
+#  SG_ NEW_SIGNAL_1 : 7|4@0+ (1,0) [0|15] "" XXX
+#  SG_ NEW_SIGNAL_7 : 16|1@0+ (1,0) [0|1] "" XXX
+#  SG_ CRZ_AVAILABLE : 17|1@0+ (1,0) [0|255] "" XXX
+#  SG_ DISTANCE_SETTING : 20|3@0+ (1,0) [0|7] "" XXX
+#  SG_ NEW_SIGNAL_8 : 22|2@0+ (1,0) [0|3] "" XXX
+#  SG_ RADAR_HAS_LEAD : 23|1@0+ (1,0) [0|1] "" XXX
+#  SG_ NEW_SIGNAL_3 : 28|15@0+ (1,0) [0|32767] "" XXX
+#  SG_ RADAR_LEAD_RELATIVE_DISTANCE : 31|3@0+ (1,0) [0|5] "" XXX
+#  SG_ NEW_SIGNAL_5 : 42|6@0+ (1,0) [0|3] "" XXX
+#  SG_ DISABLE_TIMER_1 : 43|3@1+ (1,0) [0|7] "" XXX
+#  SG_ DISABLE_TIMER_2 : 48|1@0+ (1,0) [0|1] "" XXX
+#  SG_ CRZ_ACTIVE_1_EDGE : 49|2@1+ (1,0) [0|3] "" XXX
+#  SG_ ACC_ACTIVE_2 : 52|1@0+ (1,0) [0|1] "" XXX
+#  SG_ NEW_SIGNAL_4 : 63|8@0+ (1,0) [0|3] "" XXX
+
+def emulate_radar_command(packer, car_fingerprint, frame, CC, CS, params):
+  accel = 0
+  ret = []
+  crz_ctrl = CS.crz_cntr
+  crz_info = CS.crz_info
+
+  if CC.longActive: # this is set true in longcontrol.py
+    accel = CC.actuators.accel * 1170
+    accel = accel if accel < 1000 else 1000
+  else:
+    accel = 4094
+
+  if car_fingerprint in GEN1:
+    passthrough = params.get_bool("OpenPilotRadarPassthrough")
+    if not passthrough:
+      crz_info["STATUS"] = 1
+      crz_info["ACC_ACTIVE"] = int(CC.longActive)
+      crz_info["ACC_SET_ALLOWED"] = int(bool(int(CS.cp.vl["GEAR"]["GEAR"]) & 4)) # we can set ACC_SET_ALLOWED bit when in drive. Allows crz to be set from 1kmh.
+      crz_info["CRZ_ENDED"] = 0 # this should keep acc on down to 5km/h on my 2018 M3
+      crz_info["ACCEL_CMD"] = accel
+      crz_info["COUNTER"] = frame % 16
+      crz_info["STATIC_1"] = 2047
+      
+      crz_ctrl["CRZ_ACTIVE"] = int(CC.longActive)
+      crz_ctrl["ACC_ACTIVE_2"] = int(CC.longActive)
+      crz_ctrl["DISABLE_TIMER_1"] = 0
+      crz_ctrl["DISABLE_TIMER_2"] = 0
+      crz_ctrl["NEW_SIGNAL_2"] = 513
+      crz_ctrl["NEW_SIGNAL_1"] = 1
+      crz_ctrl["NEW_SIGNAL_7"] = 1
+      crz_ctrl["CRZ_AVAILABLE"] = int(CC.longActive)
+      crz_ctrl["NEW_SIGNAL_4"] = 0
+      crz_ctrl["DISTANCE_SETTING"] = int(CC.longActive)
+      crz_ctrl["RADAR_LEAD_RELATIVE_DISTANCE"] = 0
+      crz_ctrl["CRZ_ACTIVE_1_EDGE"] = int(CC.longActive) # stays on for 1 second after CRZ_ACTIVE rise
+    
+    ret.append(packer.make_can_msg("CRZ_INFO", 0, crz_info))
+    ret.append(packer.make_can_msg("CRZ_CTRL", 0, crz_ctrl))
+    
+    if params.get_bool("SendRadarTracks"):
+      if (frame % 10 == 0):
+        for i, addr in enumerate(range(361,367)):
+          addr_name = f"RADAR_{addr}"
+          msg = CS.cp_cam.vl[addr_name]
+          values = {
+            "MSGS_1" : static_data_list[i],
+            "MSGS_2" : static_data_list[i],
+            "CTR"    : frame % 16
+          }
+        
+          
+          ret.append(packer.make_can_msg(addr_name, 0, values))
+
+  return ret
+
 
 def create_acc_cmd(self, packer, CS, CC, hold, resume):
   if self.CP.carFingerprint in GEN2:

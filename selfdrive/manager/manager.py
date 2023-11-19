@@ -49,6 +49,10 @@ def manager_init() -> None:
     ("OpenPilotRadarPassthrough", "1"),
     ("RadarInterceptWiring", "0"),
     ("PandaRadarPassthrough", "1"),
+    ("DisableRadar", "0"),
+    ("EmulateRadar", "0"),
+    ("SendRadarTracks", "1"),
+    ("StaticRadarTracks", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

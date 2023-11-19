@@ -46,6 +46,24 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_openpilot.png",
     },
     {
+      "DisableRadar",
+      tr("Disable Radar UDS Command"),
+      tr("Send UDS Commands to disable the radar. This is usefull to see how the radar reacts. Car restart required"),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
+      "SendRadarTracks",
+      tr("Passthrough the radar tracks"),
+      tr("This is usefull to see how the car reacts. Requires: Radar Intercept Wiring Harness=on, Panda Radar Passthrough=off, DisableRadar=off "),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
+      "StaticRadarTracks",
+      tr("Send static radar tracks with counter passthrough"),
+      tr("This is usefull to see how the car reacts. Requires: SendRadarTracks=on "),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
       "OpenpilotEnabledToggle",
       tr("Enable openpilot"),
       tr("Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off."),

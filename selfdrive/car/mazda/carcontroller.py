@@ -5,6 +5,7 @@ from openpilot.selfdrive.car.mazda import mazdacan
 from openpilot.selfdrive.car.mazda.values import CarControllerParams, Buttons, GEN1, MazdaFlags
 from openpilot.common.realtime import ControlsTimer as Timer
 from openpilot.common.params import Params
+from openpilot.selfdrive.car.disable_ecu import disable_ecu
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
@@ -79,11 +80,11 @@ class CarController:
                                                         self.frame, ti_apply_steer))
       can_sends.append(mazdacan.create_steering_control(self.packer, self.CP.carFingerprint,
                                                       self.frame, apply_steer, CS.cam_lkas))
-      if self.CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE:
-        """ACC RADAR COMMAND"""                                                    
-        if self.frame % 2 == 0:
-          print("In carcontroller, calling create_radar_command")
-          can_sends.extend(mazdacan.create_radar_command(self.packer, CS.CP.carFingerprint, self.frame, CC, CS, self.p))
+
+      """ACC RADAR COMMAND"""                                                    
+      if self.frame % 2 == 0:
+        print("In carcontroller, calling create_radar_command")
+        can_sends.extend(mazdacan.create_radar_command(self.packer, CS.CP.carFingerprint, self.frame, CC, CS, self.p))
 
     else:
       resume = False
