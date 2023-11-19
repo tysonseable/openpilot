@@ -44,6 +44,21 @@ qt_src = ["main.cc", "qt/sidebar.cc", "qt/onroad.cc", "qt/body.cc",
           "qt/offroad/driverview.cc", "qt/offroad/experimental_mode.cc",
           "qt/screenrecorder/omx_encoder.cc", "qt/screenrecorder/screenrecorder.cc"]
 
+def is_running_on_wsl2():
+  try:
+    with open('/proc/version', 'r') as f:
+      return 'WSL2' in f.read()
+  except FileNotFoundError:
+    return False
+  
+if is_running_on_wsl2():
+  qt_env.Append(CXXFLAGS=['-DWSL2'])
+  base_libs.remove('OmxCore')
+  qt_libs.remove('OmxCore')
+  qt_src.remove("qt/screenrecorder/screenrecorder.cc")
+  qt_src.remove("qt/screenrecorder/omx_encoder.cc")
+  print("Building for WSL2. Removing Screen Recorder")
+
 # build translation files
 with open(File("translations/languages.json").abspath) as f:
   languages = json.loads(f.read())

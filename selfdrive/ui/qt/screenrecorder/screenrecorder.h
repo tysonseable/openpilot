@@ -7,6 +7,13 @@
 #include "selfdrive/ui/ui.h"
 
 class ScreenRecorder : public QPushButton {
+#ifdef WSL2
+  public:
+    explicit ScreenRecorder(QWidget *parent = nullptr){}
+    ~ScreenRecorder() override{}
+    void update_screen(){}
+    void toggle(){}
+#else
   Q_OBJECT
 
 public:
@@ -42,4 +49,5 @@ private:
   void openEncoder(const char *filename);
   void start();
   void stop();
+#endif //WSL2
 };
