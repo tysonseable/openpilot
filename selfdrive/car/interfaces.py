@@ -597,6 +597,7 @@ class CarStateBase(ABC):
 # interface-specific helpers
 
 def get_interface_attr(attr: str, combine_brands: bool = False, ignore_none: bool = False) -> Dict[str, Any]:
+  params = Params()
   # read all the folders in selfdrive/car and return a dict where:
   # - keys are all the car models or brand names
   # - values are attr values from all car folders
@@ -609,6 +610,9 @@ def get_interface_attr(attr: str, combine_brands: bool = False, ignore_none: boo
         attr_data = getattr(brand_values, attr, None)
       else:
         continue
+
+      if not params.get("CarBrand"):
+        params.put("CarBrand", brand_name)
 
       if combine_brands:
         if isinstance(attr_data, dict):
