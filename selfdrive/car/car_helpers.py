@@ -210,11 +210,12 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
   CP.fuzzyFingerprint = not exact_match
   
   TI.saved_CarInterface = CarInterface
+  TI.experimental_long_allowed = experimental_long_allowed
 
   return CarInterface(CP, CarController, CarState), CP
 
 def get_ti():
   print("get_ti, entering get_params")
-  car_params = TI.saved_CarInterface.get_params(TI.saved_candidate, TI.saved_finger, list(), False, False)
+  car_params = TI.saved_CarInterface.get_params(TI.saved_candidate, TI.saved_finger, list(), TI.experimental_long_allowed, False)
 
   return car_params
