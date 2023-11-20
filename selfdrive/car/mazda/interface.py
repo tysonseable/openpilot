@@ -17,7 +17,7 @@ class CarInterface(CarInterfaceBase):
                                            lateral_accel_error: float, lateral_accel_deadzone: float,
                                            steering_angle: float, vego: float, friction_compensation: bool) -> float:
     steering_angle = abs(steering_angle)
-    lat_factor = torque_params.latAccelFactor * ((steering_angle * torque_params.latAngleFactor) + 1)
+    lat_factor = torque_params.latAccelFactor * ((steering_angle * .14) + 1)
     
     friction = get_friction(lateral_accel_error, lateral_accel_deadzone, FRICTION_THRESHOLD, torque_params, friction_compensation)
     return float(lateral_accel_value / lat_factor) + friction
