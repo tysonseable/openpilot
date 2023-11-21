@@ -217,6 +217,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpenPilotRadarPassthrough", PERSISTENT},
     {"PandaRadarPassthrough", PERSISTENT},
     {"MazdaUseCrzEvents", PERSISTENT},
+    // Other
+    {"AllowHotspotUpload", PERSISTENT},
 };
 
 } // namespace

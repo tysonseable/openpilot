@@ -50,6 +50,7 @@ def manager_init() -> None:
     ("RadarInterceptWiring", "0"),
     ("PandaRadarPassthrough", "1"),
     ("MazdaUseCrzEvents", "0"),
+    {"AllowHotspotUpload","1"},
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
