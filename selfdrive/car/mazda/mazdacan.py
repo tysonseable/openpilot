@@ -214,6 +214,15 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
             "MSGS_2" : int(msg["MSGS_2"]),
             "CTR"    : int(msg["CTR"]) #frame % 16
           }
+        if addr == 361:
+            values += {
+              "INVERSE_SPEED" : int(msg["MSGS_1"]),
+              "BIT" : int(msg["BIT"]),
+          }
+        if addr == 362:
+          values += {  
+            "CLIPPED_STEER_ANGLE" : int(msg["CLIPPED_STEER_ANGLE"]),
+          }
         if params.get_bool("StaticRadarTracks"):
           values = {
             "MSGS_1" : static_data_list[i][0],
@@ -221,19 +230,13 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
             "CTR"    : int(msg["CTR"]) #frame % 16
           }
           if addr == 361:
-            values = {
-              "MSGS_1" : static_data_list[i][0],
-              "MSGS_2" : static_data_list[i][1],
+            values += {
               "INVERSE_SPEED" : int(CS.out.vEgo * -4.4),
               "BIT" : 1,
-              "CTR"    : int(msg["CTR"]) #frame % 16
           }
           if addr == 362:
-            values = {
-              "MSGS_1" : static_data_list[i][0],
-              "MSGS_2" : static_data_list[i][1],
+            values += {  
               "CLIPPED_STEER_ANGLE" : int(clip(steer_angle, 0, 4092)),
-              "CTR"    : int(msg["CTR"]) #frame % 16
             }
         ret.append(packer.make_can_msg(addr_name, 0, values))
 
