@@ -58,6 +58,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_openpilot.png",
     },
     {
+      "StaticRadarTracks",
+      tr("Send static radar tracks with counter passthrough"),
+      tr("This is usefull to see how the car reacts. Requires: SendRadarTracks=on "),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
       "AllowHotspotUpload",
       tr("Allow full detailed logs to be uploaded with connect over wifi hotspot"),
       tr(""),
