@@ -39,7 +39,7 @@ def disable_ecu(logcan, sendcan, bus=0, addr=0x7d0, sub_addr=None, com_cont_req=
 
 # Disable VCM/Radar for GEN0 on init if longitudinal control or experimental mode are enabled.
 def disable_mazda_ecu(logcan, sendcan):
-  bus = 0
+  bus = 2
   addr = 0x764
 
   EXT_DIAG_REQUEST = b'\x10\x02'
