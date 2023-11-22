@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from openpilot.selfdrive.car.isotp_parallel_query import IsoTpParallelQuery
 from openpilot.system.swaglog import cloudlog
+from panda.python.uds import CONTROL_TYPE, MESSAGE_TYPE
 
 EXT_DIAG_REQUEST = b'\x10\x03'
 EXT_DIAG_RESPONSE = b'\x50\x03'
@@ -35,6 +36,31 @@ def disable_ecu(logcan, sendcan, bus=0, addr=0x7d0, sub_addr=None, com_cont_req=
     cloudlog.error(f"ecu disable retry ({i + 1}) ...")
   cloudlog.error("ecu disable failed")
   return False
+
+# Disable VCM/Radar for GEN0 on init if longitudinal control or experimental mode are enabled.
+def disable_mazda_ecu(logcan, sendcan):
+  bus = 0
+  addr = 0x764
+
+  EXT_DIAG_REQUEST = b'\x10\x02'
+  EXT_DIAG_RESPONSE = b'\x50\02'
+  query = IsoTpParallelQuery(sendcan, logcan, bus, [addr], [EXT_DIAG_REQUEST], [EXT_DIAG_RESPONSE], debug=False)
+  resp = query.get_data(2)
+
+  if not len(resp):
+    cloudlog.warning("failed to enter diagnostic session...")
+    return
+
+  sub_function = CONTROL_TYPE.DISABLE_RX_DISABLE_TX
+  communication_type = MESSAGE_TYPE.NORMAL
+  COMM_CONT_REQUEST = b'\x28' + int.to_bytes(sub_function, 1, byteorder="big") + int.to_bytes(communication_type, 1, byteorder="big")
+  COM_CONT_RESPONSE = b' '
+  query = IsoTpParallelQuery(sendcan, logcan, bus, [addr], [COMM_CONT_REQUEST], [COM_CONT_RESPONSE], debug=False)
+  resp = query.get_data(2)
+
+  if not len(resp):
+    cloudlog.warning("failed to disable ecu...")
+    return
 
 
 if __name__ == "__main__":

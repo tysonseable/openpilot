@@ -8,7 +8,7 @@ from openpilot.selfdrive.car.interfaces import CarInterfaceBase, TorqueFromLater
 from openpilot.selfdrive.controls.lib.drive_helpers import get_friction
 from openpilot.selfdrive.global_ti import TI
 from openpilot.common.params import Params
-from openpilot.selfdrive.car.disable_ecu import disable_ecu
+from openpilot.selfdrive.car.disable_ecu import disable_mazda_ecu
 
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
@@ -17,10 +17,8 @@ class CarInterface(CarInterfaceBase):
   
   @staticmethod
   def init(CP, logcan, sendcan):
-    if CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE:
-      if Params().get_bool("DisableRadar"):
-        disable_ecu(logcan, sendcan, bus=2, addr=764)
-  
+    if Params().get_bool("DisableRadar"):
+      disable_mazda_ecu(logcan, sendcan)
   
   @staticmethod
   def torque_from_lateral_accel_mazda(lateral_accel_value: float, torque_params: car.CarParams.LateralTorqueTuning,
