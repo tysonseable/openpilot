@@ -48,7 +48,7 @@ class CarInterface(CarInterfaceBase):
       ret.openpilotLongitudinalControl = experimental_long
       
       p = Params()
-      if True:#p.get_bool('RadarInterceptWiring'):
+      if p.get_bool('RadarInterceptWiring'):
         ret.experimentalLongitudinalAvailable = True
         ret.radarUnavailable = False
         ret.longitudinalTuning.kpBP = [0., 5., 30.]

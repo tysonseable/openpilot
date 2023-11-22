@@ -2,6 +2,7 @@ from openpilot.selfdrive.car.mazda.values import GEN1, Buttons
 
 from selfdrive.car.mazda.values import GEN1, GEN2, Buttons
 from common.params import Params
+from openpilot.common.numpy_fast import clip
 
 
 def create_steering_control(packer, car_fingerprint, frame, apply_steer, lkas):
@@ -165,12 +166,12 @@ def create_button_cmd(packer, car_fingerprint, counter, button):
     return packer.make_can_msg("CRZ_BTNS", 0, values)
 
 STATIC_DATA_21B = [0x01FFE000, 0x00000000]
-STATIC_DATA_361 = [0xFFF7FEFE, 0x1FC00080]
-STATIC_DATA_362 = [0xFFF7FEFE, 0x1FC00000]
-STATIC_DATA_363 = [0xFFF7FEFE, 0x1FC00000]
-STATIC_DATA_364 = [0xFFF7FEFE, 0x1FC00000]
-STATIC_DATA_365 = [0xFFF7FE7F, 0xFBFF3FC0]
-STATIC_DATA_366 = [0xFFF7FE7F, 0xFBFF3FC0]
+STATIC_DATA_361 = [0xFFF7FEFE, 0x1FC]
+STATIC_DATA_362 = [0xFFF7FEFE, 0x1FC]
+STATIC_DATA_363 = [0xFFF7FEFE, 0x1FC0000]
+STATIC_DATA_364 = [0xFFF7FEFE, 0x1FC0000]
+STATIC_DATA_365 = [0xFFF7FE7F, 0xFBFF3FC]
+STATIC_DATA_366 = [0xFFF7FE7F, 0xFBFF3FC]
 static_data_list = [STATIC_DATA_361, STATIC_DATA_362, STATIC_DATA_363, STATIC_DATA_364, STATIC_DATA_365, STATIC_DATA_366]
 
 
@@ -201,6 +202,8 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
     
     ret.append(packer.make_can_msg("CRZ_INFO", 0, crz_info))
     ret.append(packer.make_can_msg("CRZ_CTRL", 0, crz_ctrl))
+    # convert steering angle to radar units and clip to range
+    steer_angle = (CS.out.steeringAngleDeg *-17.4) + 2048
 
     if (frame % 10 == 0):
       for i, addr in enumerate(range(361,367)):
@@ -213,10 +216,25 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
           }
         if params.get_bool("StaticRadarTracks"):
           values = {
-            "MSGS_1" : static_data_list[i],
-            "MSGS_2" : static_data_list[i],
+            "MSGS_1" : static_data_list[i][0],
+            "MSGS_2" : static_data_list[i][1],
             "CTR"    : int(msg["CTR"]) #frame % 16
           }
+          if addr == 361:
+            values = {
+              "MSGS_1" : static_data_list[i][0],
+              "MSGS_2" : static_data_list[i][1],
+              "INVERSE_SPEED" : int(CS.out.vEgo * -4.4),
+              "BIT" : 1,
+              "CTR"    : int(msg["CTR"]) #frame % 16
+          }
+          if addr == 362:
+            values = {
+              "MSGS_1" : static_data_list[i][0],
+              "MSGS_2" : static_data_list[i][1],
+              "CLIPPED_STEER_ANGLE" : int(clip(steer_angle, 0, 4092)),
+              "CTR"    : int(msg["CTR"]) #frame % 16
+            }
         ret.append(packer.make_can_msg(addr_name, 0, values))
 
   return ret
