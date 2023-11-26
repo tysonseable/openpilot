@@ -320,6 +320,10 @@ class CarInterface(CarInterfaceBase):
 
     ret.centerToFront = ret.wheelbase * 0.4
 
+    # Detect smartMDPS, which bypasses EPS low speed lockout, allowing OP to send steering commands down to 0
+    if 0x2AA in fingerprint[0]:
+      ret.minSteerSpeed = 0.
+
     return ret
 
   @staticmethod
