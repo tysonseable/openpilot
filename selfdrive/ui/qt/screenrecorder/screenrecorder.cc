@@ -132,6 +132,12 @@ void ScreenRecorder::stop() {
 }
 
 void ScreenRecorder::update_screen() {
+  if (!uiState()->scene.started) {
+    if (recording) {
+      stop();
+    }
+    return;
+  }
   if (!recording) return;
 
   if (milliseconds() - started > 1000 * 60 * 3) {
