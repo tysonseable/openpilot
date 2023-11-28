@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from cereal import car
+from cereal import car, custom
 from math import fabs, exp
 from panda import Panda
 
@@ -18,6 +18,8 @@ TransmissionType = car.CarParams.TransmissionType
 NetworkLocation = car.CarParams.NetworkLocation
 BUTTONS_DICT = {CruiseButtons.RES_ACCEL: ButtonType.accelCruise, CruiseButtons.DECEL_SET: ButtonType.decelCruise,
                 CruiseButtons.MAIN: ButtonType.altButton3, CruiseButtons.CANCEL: ButtonType.cancel}
+
+FrogPilotEventName = custom.FrogPilotEvents
 
 ACCELERATOR_POS_MSG = 0xbe
 CAM_MSG = 0x320  # AEBCmd
@@ -399,7 +401,7 @@ class CarInterface(CarInterfaceBase):
       self.CP.transmissionType == TransmissionType.direct and \
       not self.CS.single_pedal_mode and \
       c.longActive:
-      events.add(EventName.pedalInterceptorNoBrake)
+      events.add(FrogPilotEventName.pedalInterceptorNoBrake)
 
     if (self.CP.flags & GMFlags.CC_LONG.value) and ret.vEgo < self.CP.minEnableSpeed and ret.cruiseState.enabled:
       events.add(EventName.speedTooLow)

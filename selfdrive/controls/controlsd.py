@@ -4,7 +4,7 @@ import math
 import time
 from typing import SupportsFloat
 
-from cereal import car, log
+from cereal import car, log, custom
 from openpilot.common.numpy_fast import clip
 from openpilot.common.realtime import config_realtime_process, Priority, Ratekeeper, DT_CTRL
 from openpilot.common.profiler import Profiler
@@ -48,6 +48,8 @@ LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 EventName = car.CarEvent.EventName
 ButtonType = car.CarState.ButtonEvent.Type
 SafetyModel = car.CarParams.SafetyModel
+
+FrogPilotEventName = custom.FrogPilotEvents
 
 IGNORED_SAFETY_MODES = (SafetyModel.silent, SafetyModel.noOutput)
 CSID_MAP = {"1": EventName.roadCameraError, "2": EventName.wideRoadCameraError, "0": EventName.driverCameraError}
@@ -261,7 +263,7 @@ class Controls:
     # show alert to indicate whether NNFF is loaded
     if not self.nn_alert_shown and self.sm.frame % 550 == 0 and self.CP.lateralTuning.which() == 'torque' and self.CI.has_lateral_torque_nn:
       self.nn_alert_shown = True
-      self.events.add(EventName.torqueNNLoad)
+      self.events.add(FrogPilotEventName.torqueNNLoad)
 
     # Block resume if cruise never previously enabled
     resume_pressed = any(be.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for be in CS.buttonEvents)
@@ -341,9 +343,9 @@ class Controls:
     # Handle turning
     if not CS.standstill:
       if self.sm['lateralPlan'].desire == Desire.turnLeft:
-        self.events.add(EventName.turningLeft)
+        self.events.add(FrogPilotEventName.turningLeft)
       elif self.sm['lateralPlan'].desire == Desire.turnRight:
-        self.events.add(EventName.turningRight)
+        self.events.add(FrogPilotEventName.turningRight)
 
     for i, pandaState in enumerate(self.sm['pandaStates']):
       # All pandas must match the list of safetyConfigs, and if outside this list, must be silent or noOutput
@@ -462,7 +464,7 @@ class Controls:
         self.events.add(EventName.modeldLagging)
 
     if self.sm['longitudinalPlan'].greenLight:
-      self.events.add(EventName.greenLight)
+      self.events.add(FrogPilotEventName.greenLight)
 
   def data_sample(self):
     """Receive data from sockets and update carState"""

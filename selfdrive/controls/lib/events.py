@@ -4,7 +4,7 @@ import os
 from enum import IntEnum
 from typing import Dict, Union, Callable, List, Optional
 
-from cereal import log, car
+from cereal import log, car, custom
 import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.realtime import DT_CTRL
@@ -16,6 +16,7 @@ AlertStatus = log.ControlsState.AlertStatus
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
 EventName = car.CarEvent.EventName
+FrogPilotEventName = custom.FrogPilotEvents
 
 
 # Alert priorities
@@ -44,6 +45,7 @@ class ET:
 
 # get event name from enum
 EVENT_NAME = {v: k for k, v in EventName.schema.enumerants.items()}
+EVENT_NAME.update({v: k for k, v in FrogPilotEventName.schema.enumerants.items()})
 
 
 class Events:
@@ -981,7 +983,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   # FrogPilot Events
-  EventName.frogSteerSaturated: {
+  FrogPilotEventName.frogSteerSaturated: {
     ET.WARNING: Alert(
       "Turn Exceeds Steering Limit",
       "JESUS TAKE THE WHEEL!!",
@@ -989,7 +991,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.warningSoft, 2.),
   },
 
-  EventName.greenLight: {
+  FrogPilotEventName.greenLight: {
     ET.PERMANENT: Alert(
       "Light turned green",
       "",
@@ -997,7 +999,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       Priority.LOW, VisualAlert.none, AudibleAlert.prompt, 3.),
   },
 
-  EventName.pedalInterceptorNoBrake: {
+  FrogPilotEventName.pedalInterceptorNoBrake: {
     ET.WARNING: Alert(
       "Braking Unavailable",
       "Shift to L",
@@ -1005,11 +1007,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       Priority.HIGH, VisualAlert.wrongGear, AudibleAlert.promptRepeat, 4.),
   },
 
-  EventName.torqueNNLoad: {
+  FrogPilotEventName.torqueNNLoad: {
     ET.PERMANENT: torque_nn_load_alert,
   },
 
-  EventName.turningLeft: {
+  FrogPilotEventName.turningLeft: {
     ET.WARNING: Alert(
       "Turning Left",
       "",
@@ -1017,7 +1019,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
   },
 
-  EventName.turningRight: {
+  FrogPilotEventName.turningRight: {
     ET.WARNING: Alert(
       "Turning Right",
       "",

@@ -118,14 +118,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     paramsdTemporaryError @50;
     paramsdPermanentError @119;
 
-    # FrogPilot Events
-    frogSteerSaturated @120;
-    greenLight @121;
-    pedalInterceptorNoBrake @122;
-    torqueNNLoad @123;
-    turningLeft @124;
-    turningRight @125;
-
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
     radarCommIssueDEPRECATED @67;
