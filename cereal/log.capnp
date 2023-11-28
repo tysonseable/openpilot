@@ -2309,8 +2309,8 @@ struct Event {
 
     # *********** Custom: reserved for forks ***********
     frogpilotEvents @107 :List(Custom.FrogPilotEvents);
-    customReserved1 @108 :Custom.CustomReserved1;
-    customReserved2 @109 :Custom.CustomReserved2;
+    randomEvents @108 :List(Custom.RandomEvents);
+    frogpilotCarControl @109 :Custom.FrogPilotCarControl;
     customReserved3 @110 :Custom.CustomReserved3;
     customReserved4 @111 :Custom.CustomReserved4;
     customReserved5 @112 :Custom.CustomReserved5;

@@ -17,10 +17,19 @@ enum FrogPilotEvents @0x81c2f05a394cf4af {
   turningRight @5;
 }
 
-struct CustomReserved1 @0xaedffd8f31e7b55d {
+enum RandomEvents @0xaedffd8f31e7b55d {
+  firefoxSteerSaturated @0;
 }
 
-struct CustomReserved2 @0xf35cc4560bbf6ec2 {
+struct FrogPilotCarControl @0xf35cc4560bbf6ec2 {
+  struct HUDControl {
+    randomEventAlert @0: RandomEventAlert;
+
+    enum RandomEventAlert {
+      none @0;
+      firefox @1;
+    }
+  }
 }
 
 struct CustomReserved3 @0xda96579883444c35 {

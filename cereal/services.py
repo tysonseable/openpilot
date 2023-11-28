@@ -84,6 +84,8 @@ services: dict[str, tuple] = {
 
   # FrogPilot
   "frogpilotEvents": (True, 1., 1),
+  "randomEvents": (True, 1., 1),
+  "frogpilotCarControl": (True, 100., 10),
 
   # debug
   "uiDebug": (True, 0., 1),

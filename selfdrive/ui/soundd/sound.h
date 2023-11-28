@@ -12,7 +12,7 @@
 
 const float MAX_VOLUME = 1.0;
 
-const std::tuple<AudibleAlert, QString, int, float> sound_list[] = {
+const std::tuple<std::variant<AudibleAlert, RandomEventAlert>, QString, int, float> sound_list[] = {
   // AudibleAlert, file name, loop count
   {AudibleAlert::ENGAGE, "engage.wav", 0, MAX_VOLUME},
   {AudibleAlert::DISENGAGE, "disengage.wav", 0, MAX_VOLUME},
@@ -24,6 +24,8 @@ const std::tuple<AudibleAlert, QString, int, float> sound_list[] = {
 
   {AudibleAlert::WARNING_SOFT, "warning_soft.wav", QSoundEffect::Infinite, MAX_VOLUME},
   {AudibleAlert::WARNING_IMMEDIATE, "warning_immediate.wav", QSoundEffect::Infinite, MAX_VOLUME},
+
+  {RandomEventAlert::FIREFOX, "firefox.wav", QSoundEffect::Infinite, MAX_VOLUME},
 };
 
 class Sound : public QObject {
@@ -40,7 +42,7 @@ protected:
 
   SubMaster sm;
   Alert current_alert = {};
-  QMap<AudibleAlert, QPair<QSoundEffect *, int>> sounds;
+  QMap<std::variant<AudibleAlert, RandomEventAlert>, QPair<QSoundEffect *, int>> sounds;
   int current_volume = -1;
 
   // FrogPilot variables
