@@ -192,6 +192,7 @@ typedef struct UIScene {
   int conditional_status;
   int custom_colors;
   int custom_signals;
+  int random_event;
   int screen_brightness;
   int steering_angle_deg;
   int wheel_icon;
