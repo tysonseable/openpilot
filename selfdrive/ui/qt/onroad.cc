@@ -388,7 +388,7 @@ void ExperimentalButton::updateState(const UIState &s) {
   }
 
   // FrogPilot variables
-  firefoxRandomEventTriggered = scene.random_event == 1;
+  firefoxRandomEventTriggered = scene.current_random_event == 1;
   rotatingWheel = scene.rotating_wheel;
   wheelIcon = scene.wheel_icon;
 
