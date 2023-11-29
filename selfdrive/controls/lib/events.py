@@ -1037,7 +1037,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       "Turn Exceeds Steering Limit",
       "IE Has Stopped Responding...",
       AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, RandomEventAlert.firefox, 2.),
+      Priority.MID, VisualAlert.steerRequired, RandomEventAlert.firefox, 2.),
   },
 }
 
