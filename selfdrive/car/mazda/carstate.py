@@ -76,6 +76,7 @@ class CarState(CarStateBase):
     self.cp = cp
     self.cp_cam = cp_cam
     self.acc = copy.copy(cp.vl["ACC"])
+    self.lkas = copy.copy(cp.vl["LKAS_"])
     
     return ret
     # end GEN2
@@ -230,6 +231,7 @@ class CarState(CarStateBase):
         ("ACC", 50),
         ("CRZ_BTNS", 10),
         ("SYSTEM_SETTINGS", 10),
+        ("LKAS_", 50),
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)

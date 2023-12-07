@@ -70,10 +70,10 @@ void LiveStream::handleEvent(kj::ArrayPtr<capnp::word> data) {
 
   capnp::FlatArrayMessageReader reader(data);
   auto event = reader.getRoot<cereal::Event>();
-  if (event.which() == cereal::Event::Which::CAN) {
+  if (event.which() == cereal::Event::Which::SENDCAN) {
     const uint64_t mono_time = event.getLogMonoTime();
     std::lock_guard lk(lock);
-    for (const auto &c : event.getCan()) {
+    for (const auto &c : event.getSendcan()) {
       received_events_.push_back(newEvent(mono_time, c));
     }
   }

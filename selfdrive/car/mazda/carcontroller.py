@@ -22,6 +22,7 @@ class CarController:
     self.hold_delay = Timer(1.0) # delay before we start holding as to not hit the brakes too hard
     self.resume_timer = Timer(0.5)
     self.cancel_delay = Timer(0.07) # 70ms delay to try to avoid a race condition with stock system
+    self.cnt2 = -1
       
   def update(self, CC, CS, now_nanos):
     can_sends = []
@@ -101,6 +102,9 @@ class CarController:
           
         resume = self.resume_timer.active() # stay on for 0.5s to release the brake. This allows the car to move.
         can_sends.append(mazdacan.create_acc_cmd(self, self.packer, CS, CC, hold, resume))
+        can_sends.append(mazdacan.create_lkas2_2019(self.packer, CS, CC, self.frame))
+        can_sends.append(mazdacan.create_lkas_2019(self.packer, CS, self, self.frame))
+        
 
       can_sends.append(mazdacan.create_steering_control(self.packer, self.CP.carFingerprint,
                                                       self.frame, apply_steer, CS.cam_lkas))

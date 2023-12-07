@@ -2,7 +2,7 @@ from openpilot.selfdrive.car.mazda.values import GEN1, Buttons
 
 from selfdrive.car.mazda.values import GEN1, GEN2, Buttons
 from common.params import Params
-
+import copy
 
 def create_steering_control(packer, car_fingerprint, frame, apply_steer, lkas):
 
@@ -180,3 +180,83 @@ def create_acc_cmd(self, packer, CS, CC, hold, resume):
 
   return packer.make_can_msg(msg_name, bus, values)
 
+OBFUSCATION_MASKS = [ 
+         24,
+         194,
+         131,
+         89,
+         1,
+         219,
+         154,
+         64,
+         42,
+         240,
+         177,
+         107,
+         51,
+         233,
+         168,
+         114
+        ]
+
+def compute_7bit_checksum(value):
+    # Assuming 'value' is a 14-bit integer
+    # Masking with 0b1111111 (which is 127 in decimal) to get the lower 7 bits
+    lower_7_bits = value & 0b1111111
+
+    # Shifting right by 7 bits and then masking to get the upper 7 bits
+    upper_7_bits = (value >> 7) & 0b1111111
+
+    # Summing the two parts
+    sum_of_bits = lower_7_bits + upper_7_bits
+
+    # Applying modulo 128 to ensure the result is a 7-bit number
+    checksum = sum_of_bits % 128
+
+    return checksum
+
+def create_lkas_2019(packer, CS, self, frame):
+  values = CS.lkas
+  new_values = copy.copy(values)
+  ctr = int(values["4_BIT_COUNTER"])
+  msg_name = "LKAS_"
+  bus = 2
+  a = compute_7bit_checksum(int(values["STEER"])) * 2
+  a = a%63
+  values["CHECK"] = a
+
+  values["MASKED_BYTE"] = int(values["MASKED_BYTE"]) ^ OBFUSCATION_MASKS[ctr] & 0xFF
+  #values["MASKED_BYTE"] = int(OBFUSCATION_MASKS[ctr])
+  return packer.make_can_msg(msg_name, bus, values)
+
+#signal = 8190 check = 60 dif = /0
+#signal = 8191 check = 63 dif = /3
+#signal = 8192 check = 0  dif = /1
+#signal = 8193 check = 2  dif = /2
+#signal = 8194 check = 4  dif = /2
+#signal = 8195 check = 33 dif = /0
+#signal = 8196 check = 10 check_difference = 0
+#signal = 8197 check = 12 check_difference = 2
+#signal = 8198 check = 15 check_difference = 3
+#signal = 8199 check = 18 check_difference = 3
+#signal = 8200 check = 20 check_difference = 2
+#signal = 8201 check = 23 check_difference = 3
+#signal = 8202 check = 26 check_difference = 3
+#signal = 8203 check = 28 check_difference = 2
+#signal = 8204 check = 31 check_difference = 3
+#signal = 8205 check = 34 check_difference = 3
+#signal = 8206 check = 36 check_difference = 2
+#signal = 8207 check = 39 check_difference = 3
+#signal = 8208 check = 42 check_difference = 3
+#signal = 8209 check = 44 check_difference = 2
+#signal = 8210 check = 47 check_difference = 3
+#signal = 8211 check = 50 check_difference = 3
+#signal = 8212 check = 52 check_difference = 2
+
+def create_lkas2_2019(packer, CS, CC, frame):
+  values = CS.lkas
+  ctr = int(values["4_BIT_COUNTER"])
+  msg_name = "LKAS_"
+  bus = 0
+  
+  return packer.make_can_msg(msg_name, bus, values)

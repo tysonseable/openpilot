@@ -243,6 +243,7 @@ LogsWidget::LogsWidget(QWidget *parent) : QFrame(parent) {
   logs->verticalHeader()->setDefaultSectionSize(delegate->sizeForBytes(8).height());
   logs->verticalHeader()->setVisible(false);
   logs->setFrameShape(QFrame::NoFrame);
+  logs->installEventFilter(this);  // copySelectionToClipboard
 
   QObject::connect(display_type_cb, qOverload<int>(&QComboBox::activated), [this](int index) {
     logs->setItemDelegateForColumn(1, index == 1 ? delegate : nullptr);
@@ -304,3 +305,33 @@ void LogsWidget::showEvent(QShowEvent *event) {
     model->refresh();
   }
 }
+
+bool LogsWidget::eventFilter(QObject *watched, QEvent *event) {
+  if (watched == logs && event->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+    if (keyEvent->key() == Qt::Key_C && (keyEvent->modifiers() & Qt::ControlModifier)) {
+      copySelectionToClipboard();
+      return true;
+    }
+  }
+  return QFrame::eventFilter(watched, event);  // Default processing
+}
+
+void LogsWidget::copySelectionToClipboard() {
+  QItemSelectionModel *selectionModel = logs->selectionModel();
+  QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+  QClipboard *clipboard = QApplication::clipboard();
+  QString selectedText;
+  for (int i = 0; i < selectedIndexes.count(); ++i) {
+    const QModelIndex &index = selectedIndexes[i];
+    QVariant data = model->data(index, Qt::DisplayRole);
+    selectedText += data.toString() + ", ";
+    // Check if this is the last index or the next index is in a different row
+    if (i == selectedIndexes.count() - 1 || selectedIndexes[i + 1].row() != index.row()) {
+      selectedText.chop(2);  // Remove the last comma and space
+      selectedText += "\n";  // New line for new row
+    }
+  }
+  clipboard->setText(selectedText);
+}
+

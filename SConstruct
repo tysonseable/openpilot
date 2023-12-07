@@ -351,11 +351,7 @@ messaging_python = [File('#cereal/messaging/messaging_pyx.so')]
 Export('cereal', 'messaging', 'messaging_python', 'visionipc')
 
 # Build other submodules
-SConscript([
-  'body/board/SConscript',
-  'opendbc/can/SConscript',
-  'panda/SConscript',
-])
+
 
 # Build rednose library and ekf models
 rednose_deps = [

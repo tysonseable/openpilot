@@ -8,6 +8,7 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QTableView>
+#include <QClipboard>
 
 #include "tools/cabana/dbc/dbcmanager.h"
 #include "tools/cabana/streams/abstractstream.h"
@@ -81,8 +82,12 @@ public:
 private slots:
   void setFilter();
 
+protected:
+  bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
   void refresh();
+  void copySelectionToClipboard();
 
   QTableView *logs;
   HistoryLogModel *model;
