@@ -91,6 +91,17 @@
     </message>
 </context>
 <context>
+    <name>BehaviorPanel</name>
+    <message>
+        <source>Max Cruise De-accel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cruise Accel Factor:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConfirmationDialog</name>
     <message>
         <source>Ok</source>
@@ -99,6 +110,21 @@
     <message>
         <source>Cancel</source>
         <translation>취소</translation>
+    </message>
+</context>
+<context>
+    <name>CustomSlider</name>
+    <message>
+        <source>RESET</source>
+        <translation type="unfinished">초기화</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reset </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">초기화</translation>
     </message>
 </context>
 <context>
@@ -643,6 +669,10 @@ This may take up to a minute.</source>
         <source>Software</source>
         <translation>소프트웨어</translation>
     </message>
+    <message>
+        <source>Behavior</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Setup</name>
@@ -1102,6 +1132,58 @@ This may take up to a minute.</source>
     <message>
         <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
         <translation>주행 시각화는 저속으로 주행 시 도로를 향한 광각 카메라로 자동 전환되어 일부 곡선 경로를 더 잘 보여줍니다. 실험 모드 로고는 우측 상단에 표시됩니다. 내비게이션 목적지가 설정되고 주행 모델에 입력되면 지도의 주행 경로가 녹색으로 바뀝니다.</translation>
+    </message>
+    <message>
+        <source>OpenPilot Radar Passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamically switchable value to modify the radar signals in mazdacan.py</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Radar Intercept Wiring Harness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn this on if you have a radar intercept harness installed. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Panda Radar Passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changes the panda code to directly forward the radar signals without openpilot affecting them. Set OpenPilot Radar Passthrough Param aswell. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Radar UDS Command</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send UDS Commands to disable the radar. This is usefull to see how the radar reacts. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send static radar tracks with counter passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is usefull to see how the car reacts. Requires: SendRadarTracks=on </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow full detailed logs to be uploaded with connect over wifi hotspot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record and Upload Road Cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upload data from the road cameras.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

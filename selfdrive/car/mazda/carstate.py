@@ -157,13 +157,15 @@ class CarState(CarStateBase):
     #       it should be used for carState.cruiseState.nonAdaptive instead
     
     if self.radar_intercept_mode: # ri harness installed
-      ret.cruiseState.available = cp_cam.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
       self.crz_info = copy.copy(cp_cam.vl["CRZ_INFO"])
       self.crz_cntr = copy.copy(cp_cam.vl["CRZ_CTRL"])
       if self.use_crz_events:
-        ret.cruiseState.enabled = cp.vl["CRZ_EVENTS"]["CRUISE_ACTIVE_CAR_MOVING"] == 1
+        ret.cruiseState.enabled = cp.vl["PEDALS"]["ACC_ACTIVE"] == 1
+        ret.cruiseState.available = cp.vl["PEDALS"]["CRZ_AVAILABLE"] == 1
+        
       else:
-        ret.cruiseState.enabled = cp_cam.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1      
+        ret.cruiseState.enabled = cp_cam.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1 
+        ret.cruiseState.available = cp_cam.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1     
     else: # normal mode without ri harness
       ret.cruiseState.available = cp.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
       ret.cruiseState.enabled = cp.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1

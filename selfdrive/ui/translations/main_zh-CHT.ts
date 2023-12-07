@@ -91,6 +91,17 @@
     </message>
 </context>
 <context>
+    <name>BehaviorPanel</name>
+    <message>
+        <source>Max Cruise De-accel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cruise Accel Factor:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConfirmationDialog</name>
     <message>
         <source>Ok</source>
@@ -99,6 +110,21 @@
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>CustomSlider</name>
+    <message>
+        <source>RESET</source>
+        <translation type="unfinished">重設</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reset </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">重設</translation>
     </message>
 </context>
 <context>
@@ -643,6 +669,10 @@ This may take up to a minute.</source>
         <source>Software</source>
         <translation>軟體</translation>
     </message>
+    <message>
+        <source>Behavior</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Setup</name>
@@ -1102,6 +1132,58 @@ This may take up to a minute.</source>
     <message>
         <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
         <translation>行駛畫面將在低速時切換至道路朝向的廣角鏡頭，以更好地顯示一些轉彎。實驗模式圖示也將顯示在右上角。當設定了導航目的地並且行駛模型正在將其作為輸入時，地圖上的行駛路徑將變為綠色。</translation>
+    </message>
+    <message>
+        <source>OpenPilot Radar Passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamically switchable value to modify the radar signals in mazdacan.py</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Radar Intercept Wiring Harness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn this on if you have a radar intercept harness installed. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Panda Radar Passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changes the panda code to directly forward the radar signals without openpilot affecting them. Set OpenPilot Radar Passthrough Param aswell. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Radar UDS Command</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send UDS Commands to disable the radar. This is usefull to see how the radar reacts. Car restart required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send static radar tracks with counter passthrough</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is usefull to see how the car reacts. Requires: SendRadarTracks=on </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow full detailed logs to be uploaded with connect over wifi hotspot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record and Upload Road Cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upload data from the road cameras.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

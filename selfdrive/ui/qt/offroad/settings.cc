@@ -46,12 +46,6 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_openpilot.png",
     },
     {
-      "MazdaUseCrzEvents",
-      tr("Use Cruise events signal for cruise state"),
-      tr(""),
-      "../assets/offroad/icon_openpilot.png",
-    },
-    {
       "DisableRadar",
       tr("Disable Radar UDS Command"),
       tr("Send UDS Commands to disable the radar. This is usefull to see how the radar reacts. Car restart required"),

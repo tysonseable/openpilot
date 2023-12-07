@@ -49,7 +49,6 @@ def manager_init() -> None:
     ("OpenPilotRadarPassthrough", "1"),
     ("RadarInterceptWiring", "0"),
     ("PandaRadarPassthrough", "1"),
-    ("MazdaUseCrzEvents", "0"),
     ("AllowHotspotUpload","1"),
     ("StaticRadarTracks", "0"),
   ]

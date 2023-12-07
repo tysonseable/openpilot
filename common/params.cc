@@ -216,7 +216,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"RadarInterceptWiring", PERSISTENT},
     {"OpenPilotRadarPassthrough", PERSISTENT},
     {"PandaRadarPassthrough", PERSISTENT},
-    {"MazdaUseCrzEvents", PERSISTENT},
     {"DisableRadar", PERSISTENT},
     {"StaticRadarTracks", PERSISTENT},
     // Other

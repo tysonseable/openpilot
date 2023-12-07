@@ -47,7 +47,6 @@ class TI_STATE:
   
 class MazdaFlags(IntFlag):
   RADAR_INTERCEPT_MODE = 1
-  RI_USE_CRZ_EVENTS = 2
   
 class CAR(StrEnum):
   CX5 = "MAZDA CX-5"
