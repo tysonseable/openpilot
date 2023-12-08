@@ -21,7 +21,6 @@ class CarState(CarStateBase):
     self.cam_lkas = 0
     self.params = CarControllerParams(CP)
     self.radar_intercept_mode = CP.flags & MazdaFlags.RADAR_INTERCEPT_MODE
-    self.use_crz_events =  CP.flags & MazdaFlags.RI_USE_CRZ_EVENTS
     
     self.ti_ramp_down = False
     self.ti_version = 1
@@ -159,13 +158,8 @@ class CarState(CarStateBase):
     if self.radar_intercept_mode: # ri harness installed
       self.crz_info = copy.copy(cp_cam.vl["CRZ_INFO"])
       self.crz_cntr = copy.copy(cp_cam.vl["CRZ_CTRL"])
-      if self.use_crz_events:
-        ret.cruiseState.enabled = cp.vl["PEDALS"]["ACC_ACTIVE"] == 1
-        ret.cruiseState.available = cp.vl["PEDALS"]["CRZ_AVAILABLE"] == 1
-        
-      else:
-        ret.cruiseState.enabled = cp_cam.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1 
-        ret.cruiseState.available = cp_cam.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1     
+      ret.cruiseState.enabled = cp.vl["PEDALS"]["ACC_ACTIVE"] == 1
+      ret.cruiseState.available = cp.vl["PEDALS"]["CRZ_AVAILABLE"] == 1    
     else: # normal mode without ri harness
       ret.cruiseState.available = cp.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
       ret.cruiseState.enabled = cp.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1
