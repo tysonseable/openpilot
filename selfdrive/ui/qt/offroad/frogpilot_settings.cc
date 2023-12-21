@@ -540,7 +540,7 @@ void FrogPilotPanel::setParams() {
     {"UnlimitedLength", "1"},
     {"VisionTurnControl", "1"},
     {"WheelIcon", "1"},
-    {"UploadRoad", "1"},
+    {"RecordRoad", "1"},
   };
 
   bool rebootRequired = false;
