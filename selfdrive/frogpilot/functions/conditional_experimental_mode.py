@@ -123,7 +123,7 @@ class ConditionalExperimentalMode:
 
     # Road curvature check
     curve_detected = self.road_curvature(modelData, v_ego)
-    if self.curves and curve_detected and (self.curves_lead or not lead) and mtsc_offset == 0 and v_offset == 0:
+    if self.curves and curve_detected and (self.curves_lead or not lead) and mtsc_offset == 0 and vtsc_offset == 0:
       self.status_value = 11
       return True
 
