@@ -233,7 +233,13 @@ void ignition_can_hook(CANPacket_t *to_push) {
       // SystemPowerMode (2=Run, 3=Crank Request)
       ignition_can = (GET_BYTE(to_push, 0) & 0x2U) != 0U;
       ignition_can_cnt = 0U;
+    } else if ((addr == 0x211) && (len == 8)) {
+      // GEN2 Mazda exception
+      ignition_can = (GET_BYTE(to_push, 6) & 0x2U) == 0U;
+      ignition_can_cnt = 0U;
     }
+  } else {
+    // do nothing MISRA 
   }
 }
 
