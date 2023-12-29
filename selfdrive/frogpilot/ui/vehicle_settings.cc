@@ -110,7 +110,9 @@ FrogPilotVehiclesPanel::FrogPilotVehiclesPanel(SettingsWindow *parent) : ListWid
 
     {"LockDoors", "Lock Doors In Drive", "Automatically lock the doors when in drive and unlock when in park.", ""},
     {"SNGHack", "Stop and Go Hack", "Enable the 'Stop and Go' hack for vehicles without stock stop and go functionality.", ""},
-    {"TSS2Tune", "TSS2 Tune", "Tuning profile based on the tuning profile from DragonPilot for TSS2 vehicles.", ""}
+    {"TSS2Tune", "TSS2 Tune", "Tuning profile based on the tuning profile from DragonPilot for TSS2 vehicles.", ""},
+
+    {"EnableTI", "Enable Torque Interceptor", "Use the TI hardware to steer the wheel", ""},
   };
 
   for (const auto &[param, title, desc, icon] : vehicleToggles) {
@@ -121,6 +123,11 @@ FrogPilotVehiclesPanel::FrogPilotVehiclesPanel(SettingsWindow *parent) : ListWid
     connect(toggles["TSS2Tune"], &ToggleControl::toggleFlipped, [=]() {
       if (ConfirmationDialog::toggle("Reboot required to take effect.", "Reboot Now", parent)) {
         Hardware::reboot();
+      }
+    });
+
+    connect(toggles["EnableTI"], &ToggleControl::toggleFlipped, [=]() {
+      if (ConfirmationDialog::toggleAlert("Vehicle restart required to take effect.", "Ok", parent)) {
       }
     });
 
@@ -137,6 +144,7 @@ FrogPilotVehiclesPanel::FrogPilotVehiclesPanel(SettingsWindow *parent) : ListWid
 
   gmKeys = {"EVTable", "LongPitch", "LowerVolt"};
   toyotaKeys = {"LockDoors", "SNGHack", "TSS2Tune"};
+  mazdaKeys = {"EnableTI"};
 
   setDefaults();
   setModels();
@@ -164,15 +172,19 @@ void FrogPilotVehiclesPanel::setToggles() {
 
     const bool gm = carMake == "Buick" || carMake == "Cadillac" || carMake == "Chevrolet" || carMake == "GM" || carMake == "GMC";
     const bool toyota = carMake == "Lexus" || carMake == "Toyota";
+    const bool mazda = carMake == "Mazda";
 
     for (const auto &[key, toggle] : toggles) {
       const bool gmToggles = gmKeys.find(key.c_str()) != gmKeys.end();
       const bool toyotaToggles = toyotaKeys.find(key.c_str()) != toyotaKeys.end();
+      const bool mazdaToggles = mazdaKeys.find(key.c_str()) != mazdaKeys.end();
 
       if (gm) {
         toggle->setVisible(gmToggles);
       } else if (toyota) {
         toggle->setVisible(toyotaToggles);
+      } else if (mazda) {
+        toggle->setVisible(mazdaToggles);
       } else {
         toggle->setVisible(false);
       }
@@ -192,6 +204,7 @@ void FrogPilotVehiclesPanel::setDefaults() {
     {"LockDoors", "0"},
     {"SNGHack", "1"},
     {"TSS2Tune", "1"},
+    {"EnableTI", "1"},
   };
 
   bool rebootRequired = false;
