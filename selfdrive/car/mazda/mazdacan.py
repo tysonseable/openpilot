@@ -171,7 +171,7 @@ def create_acc_cmd(self, packer, CS, CC, hold, resume):
     bus = 2
 
     if (values["ACC_ENABLED"]):
-      if Params().get_bool("ExperimentalLongitudinalEnabled"):
+      if Params().get_bool("ExperimentalLongitudinalEnabled") and CC.longActive:
         values["ACCEL_CMD"] = (CC.actuators.accel * 240) + 2000
       values["HOLD"] = hold
       values["RESUME"] = resume
