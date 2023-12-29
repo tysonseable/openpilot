@@ -368,6 +368,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"VisionTurnControl", PERSISTENT},
     {"WheelIcon", PERSISTENT},
     {"WideCamera", PERSISTENT},
+    {"EnableTI", PERSISTENT},
 };
 
 } // namespace

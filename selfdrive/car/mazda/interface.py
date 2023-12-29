@@ -6,7 +6,7 @@ from openpilot.selfdrive.car import get_safety_config
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase, TorqueFromLateralAccelCallbackType, FRICTION_THRESHOLD
 from openpilot.selfdrive.controls.lib.drive_helpers import get_friction
 from openpilot.selfdrive.global_ti import TI
-
+from panda import Panda
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
 
@@ -34,6 +34,7 @@ class CarInterface(CarInterfaceBase):
 
     if candidate in GEN1:
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.mazda)]
+      ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_ENABLE_TI
       ret.steerActuatorDelay = 0.1
       
     if candidate in GEN2:
