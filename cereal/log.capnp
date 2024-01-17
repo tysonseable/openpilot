@@ -2185,6 +2185,17 @@ struct Microphone {
   filteredSoundPressureWeightedDb @2 :Float32;
 }
 
+struct MicrophoneRaw {
+  frameIndex @0 :UInt32; # buffer index * size of buffer
+  rawSample @1 :Data;
+}
+
+struct SpeechToText {
+  isTranscribing @0 :Bool;
+  finalResultReady @1 :Bool;
+  result @2 :Text;
+}
+
 struct Event {
   logMonoTime @0 :UInt64;  # nanoseconds
   valid @67 :Bool = true;

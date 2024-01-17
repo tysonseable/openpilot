@@ -192,6 +192,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"ReplayControlsState", CLEAR_ON_MANAGER_START | CLEAR_ON_ONROAD_TRANSITION},
     {"ShouldDoUpdate", CLEAR_ON_MANAGER_START},
     {"SnoozeUpdate", CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION},
+    {"SpeechToTextAllowed", PERSISTENT},
     {"SshEnabled", PERSISTENT},
     {"SubscriberInfo", PERSISTENT},
     {"TermsVersion", PERSISTENT},
@@ -211,6 +212,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"UpdaterTargetBranch", CLEAR_ON_MANAGER_START},
     {"Version", PERSISTENT},
     {"VisionRadarToggle", PERSISTENT},
+    {"WakeWordDetected", CLEAR_ON_MANAGER_START},
     {"WheeledBody", PERSISTENT},
 
     // FrogPilot parameters

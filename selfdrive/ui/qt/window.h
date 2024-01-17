@@ -6,6 +6,7 @@
 #include "selfdrive/ui/qt/home.h"
 #include "selfdrive/ui/qt/offroad/onboarding.h"
 #include "selfdrive/ui/qt/offroad/settings.h"
+#include "selfdrive/ui/qt/widgets/assistant.h"
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -25,4 +26,5 @@ private:
 
   // FrogPilot variables
   Params params;
+  AssistantOverlay *assistantOverlay;
 };
