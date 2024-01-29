@@ -482,11 +482,12 @@ public:
     valueLabel->setStyleSheet("QLabel { color: #E0E879; }");
   }
 
-  void updateControl(float newMinValue, float newMaxValue, const QString &newLabel, float newDivision = 1.0f) {
+  void updateControl(float newMinValue, float newMaxValue, const QString &newLabel, float newDivision = 1.0f, float newStep = 1.0f) {
     minValue = newMinValue;
     maxValue = newMaxValue;
     labelText = newLabel;
     division = newDivision;
+    step = newStep;
   }
 
   void showEvent(QShowEvent *event) override {
@@ -500,6 +501,7 @@ signals:
 private:
   bool loop;
   float division;
+  float step;
   float maxValue;
   float minValue;
   float previousValue;

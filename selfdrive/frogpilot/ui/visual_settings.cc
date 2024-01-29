@@ -355,5 +355,7 @@ void FrogPilotVisualsPanel::hideSubSubToggles() {
 }
 
 void FrogPilotVisualsPanel::hideEvent(QHideEvent *event) {
+  paramsMemory.putInt("FrogPilotTogglesOpen", 0);
+
   hideSubToggles();
 }

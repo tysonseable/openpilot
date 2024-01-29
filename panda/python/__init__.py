@@ -144,6 +144,7 @@ class Panda:
   SAFETY_FAW = 26
   SAFETY_BODY = 27
   SAFETY_HYUNDAI_CANFD = 28
+  SAFETY_MAZDA_2019 = 30
 
   SERIAL_DEBUG = 0
   SERIAL_ESP = 1
@@ -173,7 +174,7 @@ class Panda:
   CAN_PACKET_VERSION = 4
   HEALTH_PACKET_VERSION = 15
   CAN_HEALTH_PACKET_VERSION = 5
-  HEALTH_STRUCT = struct.Struct("<IIIIIIIIIBBBBBHBBBHfBBHBHHB")
+  HEALTH_STRUCT = struct.Struct("<IIIIIIIIIBBBBBHBBBHfBBHBHHBB")
   CAN_HEALTH_STRUCT = struct.Struct("<BIBBBBBBBBIIIIIIIHHBBBIIII")
 
   F4_DEVICES = [HW_TYPE_WHITE_PANDA, HW_TYPE_GREY_PANDA, HW_TYPE_BLACK_PANDA, HW_TYPE_UNO, HW_TYPE_DOS]
@@ -243,6 +244,8 @@ class Panda:
 
   FLAG_FORD_LONG_CONTROL = 1
   FLAG_FORD_CANFD = 2
+  
+  FLAG_MAZDA_ENABLE_TI = 1
 
   def __init__(self, serial: Optional[str] = None, claim: bool = True, disable_checks: bool = True, can_speed_kbps: int = 500):
     self._connect_serial = serial

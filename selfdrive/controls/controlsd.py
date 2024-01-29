@@ -21,7 +21,7 @@ from openpilot.common.realtime import config_realtime_process, Priority, Ratekee
 from openpilot.common.swaglog import cloudlog
 
 from openpilot.selfdrive.boardd.boardd import can_list_to_can_capnp
-from openpilot.selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
+from openpilot.selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can, get_ti
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
 from openpilot.selfdrive.controls.lib.alertmanager import AlertManager, set_offroad_alert
 from openpilot.selfdrive.controls.lib.drive_helpers import VCruiseHelper, clip_curvature
@@ -223,6 +223,7 @@ class Controls:
       if self.disengage_on_accelerator:
         self.disengage_on_accelerator = False
         self.params.put_bool("DisengageOnAccelerator", False)
+    self.ti_ready = False
 
     self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 
@@ -474,6 +475,18 @@ class Controls:
 
       if log.PandaState.FaultType.relayMalfunction in pandaState.faults:
         self.events.add(EventName.relayMalfunction)
+
+      if pandaState.torqueInterceptorDetected and not self.ti_ready:
+        self.ti_ready = True
+        self.CP.enableTorqueInterceptor = True
+        #Update CP based on torque_interceptor_ready
+        self.CP = get_ti()
+        # set alternative experiences since get_ti() reset it to default.
+        if not self.disengage_on_accelerator:
+          self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
+        if self.always_on_lateral:
+          self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALWAYS_ON_LATERAL
+        self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 
     # Handle HW and system malfunctions
     # Order is very intentional here. Be careful when modifying this.

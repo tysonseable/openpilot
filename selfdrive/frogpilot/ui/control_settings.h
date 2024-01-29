@@ -61,4 +61,10 @@ private:
   bool started = false;
 
   float steerRatioStock = params.getFloat("SteerRatioStock");
+  float latAccelFactorStock = params.getFloat("LatAccelFactorStock");
+  float latAngleFactorStock = params.getFloat("LatAngleFactorStock");
+  float frictionStock = params.getFloat("FrictionStock");
+  float delayStock = params.getFloat("DelayStock");
+  float offsetStock = params.getFloat("OffsetStock");
+
 };
