@@ -328,6 +328,10 @@ class CarInterfaceBase(ABC):
     ret.longitudinalActuatorDelayLowerBound = 0.15
     ret.longitudinalActuatorDelayUpperBound = 0.15
     ret.steerLimitTimer = 1.0
+
+    # No Torque Interceptor by default
+    ret.enableTorqueInterceptor = False
+
     return ret
 
   @staticmethod
@@ -343,6 +347,10 @@ class CarInterfaceBase(ABC):
     tune.torque.latAccelFactor = params['LAT_ACCEL_FACTOR']
     tune.torque.latAccelOffset = 0.0
     tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
+    p = Params()
+    p.put_float("LatAccelFactorStock", tune.torque.latAccelFactor)
+    p.put_float("FrictionStock", tune.torque.friction)
+    p.put_float("OffsetStock", tune.torque.latAccelOffset)
 
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:

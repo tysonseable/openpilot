@@ -465,6 +465,7 @@ struct CarParams {
   enableBsm @56 :Bool;       # blind spot monitoring
   flags @64 :UInt32;         # flags for car specific quirks
   experimentalLongitudinalAvailable @71 :Bool;
+  enableTorqueInterceptor @74 :Bool;
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
@@ -629,6 +630,7 @@ struct CarParams {
     hyundaiCanfd @28;
     volkswagenMqbEvo @29;
     chryslerCusw @30;
+    mazda2019 @31;
   }
 
   enum SteerControlType {

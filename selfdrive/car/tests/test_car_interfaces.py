@@ -46,6 +46,9 @@ def get_fuzzy_car_interface_args(draw: DrawType) -> dict:
   params['car_fw'] = [car.CarParams.CarFw(ecu=fw[0], address=fw[1], subAddress=fw[2] or 0) for fw in params['car_fw']]
   return params
 
+from openpilot.selfdrive.global_ti import TI
+from openpilot.selfdrive.car.mazda.values import GEN1
+
 class TestCarInterfaces(unittest.TestCase):
   # FIXME: Due to the lists used in carParams, Phase.target is very slow and will cause
   #  many generated examples to overrun when max_examples > ~20, don't use it
@@ -61,6 +64,12 @@ class TestCarInterfaces(unittest.TestCase):
 
     car_params = CarInterface.get_params(params, car_name, args['fingerprints'], args['car_fw'],
                                          experimental_long=args['experimental_long'], docs=False)
+    if car_name in GEN1:
+      TI.saved_candidate = car_name
+      TI.saved_CarInterface = CarInterface
+      TI.saved_finger = args['fingerprints']
+      car_params = TI.saved_CarInterface.get_params(TI.saved_candidate, TI.saved_finger, list(), experimental_long=False, docs=False)
+      car_params.enableTorqueInterceptor = True
       
     car_interface = CarInterface(car_params, CarController, CarState)
     assert car_params

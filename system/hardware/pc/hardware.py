@@ -16,6 +16,9 @@ class Pc(HardwareBase):
 
   def get_sound_card_online(self):
     return True
+  
+  def soft_reboot(self):
+    print("SOFT REBOOT!")
 
   def reboot(self, reason=None):
     print("REBOOT!")

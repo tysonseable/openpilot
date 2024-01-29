@@ -31,6 +31,7 @@ private:
   std::set<QString> gmKeys = {"EVTable", "GasRegenCmd", "LongPitch", "LowerVolt"};
   std::set<QString> subaruKeys = {"CrosstrekTorque"};
   std::set<QString> toyotaKeys = {"LockDoors", "LongitudinalTune", "SNGHack"};
+  std::set<QString> mazdaKeys = {"EnableTI"};
 
   Params params;
   Params paramsMemory{"/dev/shm/params"};

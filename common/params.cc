@@ -186,6 +186,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"PandaSignatures", CLEAR_ON_MANAGER_START},
     {"PrimeType", PERSISTENT},
     {"RecordFront", PERSISTENT},
+    {"RecordBack", PERSISTENT},
     {"RecordFrontLock", PERSISTENT},  // for the internal fleet
     {"ReplayControlsState", CLEAR_ON_MANAGER_START | CLEAR_ON_ONROAD_TRANSITION},
     {"SnoozeUpdate", CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION},
@@ -435,6 +436,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"WarningImmediateVolume", PERSISTENT},
     {"WheelIcon", PERSISTENT},
     {"WheelSpeed", PERSISTENT},
+    {"EnableTI", PERSISTENT},
 };
 
 } // namespace
