@@ -50,8 +50,17 @@ class CarState(CarStateBase):
                                                                       cp.vl["BLINK_INFO"]["RIGHT_BLINK"] == 1)
 
     ret.steeringAngleDeg = cp_cam.vl["STEER"]["STEER_ANGLE"]
-    
-    ret.steeringTorque = cp_body.vl["EPS_FEEDBACK"]["STEER_TORQUE_SENSOR"]
+    hall1 = cp_body.vl["EPS_FEEDBACK"]["STEER_TORQUE_SENSOR"]
+    if not cp_body.vl["EPS_FEEDBACK"]["CPU_0_VIOL"]:
+      hall2 = cp_body.vl["EPS_FEEDBACK2"]["HALL2"]
+      hall3 = cp_body.vl["EPS_FEEDBACK2"]["HALL3"]
+      hall4 = cp_body.vl["EPS_FEEDBACK2"]["HALL4"]
+      dt_avg = (hall1 + hall2 + hall3 + hall4)/4
+    else:
+      dt_avg = hall1
+
+    ret.steeringTorque = dt_avg
+
     can_gear = int(cp_cam.vl["GEAR"]["GEAR"])
     ret.gas = cp_cam.vl["ENGINE_DATA"]["PEDAL_GAS"]
     
