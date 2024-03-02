@@ -52,5 +52,9 @@
   "Offroad_Recalibration": {
     "text": "openpilot detected a change in the device's mounting position. Ensure the device is fully seated in the mount and the mount is firmly secured to the windshield.",
     "severity": 0
+  },
+  "Upload_Driving_Logs": {
+    "text": "To improve your Openpilot driving experience you can contact twilsonco on Discord to have your vehicle tuned. Go to Setting>Network>Advanced and enable SSH access and add 'twilsonco' to the SSH Keys.",
+    "severity": 1
   }
 }

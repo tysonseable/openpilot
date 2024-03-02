@@ -333,6 +333,30 @@
         <source>Flash</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete Toggle Storage Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This button provides a swift and secure way to permanently delete all long term stored toggle settings. Ideal for maintaining privacy or freeing up space.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to permanently delete all of your long term toggle settings storage?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soft Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to soft reboot?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disengage to Soft Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DriveStats</name>
@@ -358,6 +382,10 @@
     </message>
     <message>
         <source>Miles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FROGPILOT</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -527,6 +555,10 @@
     </message>
     <message>
         <source>Device temperature too high. System cooling down before starting. Current internal component temperature: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To improve your Openpilot driving experience you can contact twilsonco on Discord to have your vehicle tuned. Go to Setting&gt;Network&gt;Advanced and enable SSH access and add &apos;twilsonco&apos; to the SSH Keys.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1029,14 +1061,6 @@ This may take up to a minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Choose the update frequency for FrogPilot&apos;s automatic updates.
-
-This feature will handle the download, installation, and device reboot for a seamless &apos;Set and Forget&apos; experience.
-
-Weekly updates start at midnight every Sunday.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Update Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1051,6 +1075,14 @@ Weekly updates start at midnight every Sunday.</source>
     <message>
         <source>VIEW</source>
         <translation type="unfinished">見る</translation>
+    </message>
+    <message>
+        <source>Choose the frequency to automatically update FrogPilot.
+
+This feature will handle the download, installation, and device reboot for a seamless &apos;Set and Forget&apos; update experience.
+
+Weekly updates start at midnight every Sunday.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1320,6 +1352,14 @@ Weekly updates start at midnight every Sunday.</source>
     </message>
     <message>
         <source>Training data will be pulled periodically while your device is on Wi-Fi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uploading disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Training data wont be pulled periodically until you disable the &apos;Disable Uploading&apos; toggle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

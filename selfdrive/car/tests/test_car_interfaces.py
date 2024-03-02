@@ -6,6 +6,7 @@ import hypothesis.strategies as st
 from hypothesis import Phase, given, settings
 import importlib
 from parameterized import parameterized
+from types import SimpleNamespace
 
 from cereal import car, messaging
 from openpilot.common.realtime import DT_CTRL
@@ -47,7 +48,7 @@ def get_fuzzy_car_interface_args(draw: DrawType) -> dict:
   return params
 
 from openpilot.selfdrive.global_ti import TI
-from openpilot.selfdrive.car.mazda.values import GEN1
+from openpilot.selfdrive.car.mazda.values import GEN1, GEN2
 
 class TestCarInterfaces(unittest.TestCase):
   # FIXME: Due to the lists used in carParams, Phase.target is very slow and will cause
@@ -68,7 +69,7 @@ class TestCarInterfaces(unittest.TestCase):
       TI.saved_candidate = car_name
       TI.saved_CarInterface = CarInterface
       TI.saved_finger = args['fingerprints']
-      car_params = TI.saved_CarInterface.get_params(TI.saved_candidate, TI.saved_finger, list(), experimental_long=False, docs=False)
+      car_params = TI.saved_CarInterface.get_params(params, TI.saved_candidate, TI.saved_finger, list(), experimental_long=False, docs=False)
       car_params.enableTorqueInterceptor = True
       
     car_interface = CarInterface(car_params, CarController, CarState)

@@ -79,10 +79,10 @@ def manager_init() -> None:
       params.remove("Model")
 
   default_params: List[Tuple[str, Union[str, bytes]]] = [
-    ("CompletedTrainingVersion", "0"),
+    ("CompletedTrainingVersion", "1"),
     ("DisengageOnAccelerator", "0"),
     ("GsmMetered", "1"),
-    ("HasAcceptedTerms", "0"),
+    ("HasAcceptedTerms", "1"),
     ("LanguageSetting", "main_en"),
     ("OpenpilotEnabledToggle", "1"),
     ("UpdaterAvailableBranches", ""),
@@ -196,7 +196,7 @@ def manager_init() -> None:
     ("NNFF", "1"),
     ("NoLogging", "0"),
     ("NoUploads", "0"),
-    ("NudgelessLaneChange", "1"),
+    ("NudgelessLaneChange", "0"),
     ("NumericalTemp", "0"),
     ("OfflineMode", "0"),
     ("Offset1", "5"),
@@ -272,7 +272,10 @@ def manager_init() -> None:
     ("WarningSoftVolume", "100"),
     ("WarningImmediateVolume", "100"),
     ("WheelIcon", "3"),
-    ("WheelSpeed", "0")
+    ("WheelSpeed", "0"),
+    ("EnableTI", "1"),
+    ("UpdateSchedule", "1"),
+    ("UpdateTime", "1")
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -289,6 +292,11 @@ def manager_init() -> None:
         params.put(k, params_storage.get(k))
     else:
       params_storage.put(k, params.get(k))
+
+  # Overwrite set params
+  if params.get_int("UpdateSchedule") == 0:
+    params.put("UpdateSchedule", "1")
+    params.put("UpdateTime", "1")
 
   # Create folders needed for msgq
   try:
