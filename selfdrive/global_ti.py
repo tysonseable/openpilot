@@ -6,3 +6,4 @@ class TI:
   saved_finger = gen_empty_fingerprint()
   saved_CarInterface: object
   enabled = False
+  experimental_long_allowed: bool = False
