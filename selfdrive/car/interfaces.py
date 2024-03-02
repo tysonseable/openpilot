@@ -19,6 +19,7 @@ from openpilot.selfdrive.car import apply_hysteresis, gen_empty_fingerprint, sca
 from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, get_friction
 from openpilot.selfdrive.controls.lib.events import Events
 from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
+from openpilot.selfdrive.controls.lib.alertmanager import set_offroad_alert
 
 from openpilot.selfdrive.frogpilot.functions.frogpilot_functions import FrogPilotFunctions
 
@@ -175,6 +176,8 @@ def get_nn_model(car, eps_firmware) -> Tuple[Union[FluxModel, None, float]]:
   model, similarity_score = get_nn_model_path(car, eps_firmware)
   if model is not None:
     model = FluxModel(model)
+  else:
+    set_offroad_alert("Upload_Driving_Logs", True)
   return model, similarity_score
 
 # generic car and radar interfaces
@@ -347,11 +350,6 @@ class CarInterfaceBase(ABC):
     tune.torque.latAccelFactor = params['LAT_ACCEL_FACTOR']
     tune.torque.latAccelOffset = 0.0
     tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
-    p = Params()
-    p.put_float("LatAccelFactorStock", tune.torque.latAccelFactor)
-    p.put_float("FrictionStock", tune.torque.friction)
-    p.put_float("OffsetStock", tune.torque.latAccelOffset)
-
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
     pass

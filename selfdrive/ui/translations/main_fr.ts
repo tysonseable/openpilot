@@ -333,6 +333,30 @@
         <source>Flash</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete Toggle Storage Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This button provides a swift and secure way to permanently delete all long term stored toggle settings. Ideal for maintaining privacy or freeing up space.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to permanently delete all of your long term toggle settings storage?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soft Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to soft reboot?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disengage to Soft Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DriveStats</name>
@@ -358,6 +382,10 @@
     </message>
     <message>
         <source>Miles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FROGPILOT</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -530,6 +558,10 @@
     <message>
         <source>openpilot detected a change in the device&apos;s mounting position. Ensure the device is fully seated in the mount and the mount is firmly secured to the windshield.</source>
         <translation>openpilot a détecté un changement dans la position de montage de l&apos;appareil. Assurez-vous que l&apos;appareil est totalement inséré dans le support et que le support est fermement fixé au pare-brise.</translation>
+    </message>
+    <message>
+        <source>To improve your Openpilot driving experience you can contact twilsonco on Discord to have your vehicle tuned. Go to Setting&gt;Network&gt;Advanced and enable SSH access and add &apos;twilsonco&apos; to the SSH Keys.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1035,14 +1067,6 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Choose the update frequency for FrogPilot&apos;s automatic updates.
-
-This feature will handle the download, installation, and device reboot for a seamless &apos;Set and Forget&apos; experience.
-
-Weekly updates start at midnight every Sunday.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Update Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1057,6 +1081,14 @@ Weekly updates start at midnight every Sunday.</source>
     <message>
         <source>VIEW</source>
         <translation type="unfinished">VOIR</translation>
+    </message>
+    <message>
+        <source>Choose the frequency to automatically update FrogPilot.
+
+This feature will handle the download, installation, and device reboot for a seamless &apos;Set and Forget&apos; update experience.
+
+Weekly updates start at midnight every Sunday.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1327,6 +1359,14 @@ Weekly updates start at midnight every Sunday.</source>
     <message>
         <source>Training data will be pulled periodically while your device is on Wi-Fi</source>
         <translation>Les données d&apos;entraînement seront envoyées périodiquement lorsque votre appareil est connecté au réseau Wi-Fi</translation>
+    </message>
+    <message>
+        <source>Uploading disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Training data wont be pulled periodically until you disable the &apos;Disable Uploading&apos; toggle</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -6,9 +6,11 @@ import hypothesis.strategies as st
 from hypothesis import Phase, given, settings
 import importlib
 from parameterized import parameterized
+from types import SimpleNamespace
 
 from cereal import car, messaging
 from openpilot.common.realtime import DT_CTRL
+from openpilot.common.params import Params
 from openpilot.selfdrive.car import gen_empty_fingerprint
 from openpilot.selfdrive.car.car_helpers import interfaces
 from openpilot.selfdrive.car.fingerprints import all_known_cars
@@ -18,6 +20,7 @@ from openpilot.selfdrive.controls.lib.latcontrol_angle import LatControlAngle
 from openpilot.selfdrive.controls.lib.latcontrol_pid import LatControlPID
 from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
 from openpilot.selfdrive.controls.lib.longcontrol import LongControl
+from openpilot.selfdrive.controls.controlsd import Controls
 from openpilot.selfdrive.test.fuzzy_generation import DrawType, FuzzyGenerator
 
 ALL_ECUS = list({ecu for ecus in FW_VERSIONS.values() for ecu in ecus.keys()})
@@ -45,7 +48,7 @@ def get_fuzzy_car_interface_args(draw: DrawType) -> dict:
   return params
 
 from openpilot.selfdrive.global_ti import TI
-from openpilot.selfdrive.car.mazda.values import GEN1
+from openpilot.selfdrive.car.mazda.values import GEN1, GEN2
 
 class TestCarInterfaces(unittest.TestCase):
   # FIXME: Due to the lists used in carParams, Phase.target is very slow and will cause
@@ -58,14 +61,15 @@ class TestCarInterfaces(unittest.TestCase):
     CarInterface, CarController, CarState = interfaces[car_name]
 
     args = get_fuzzy_car_interface_args(data.draw)
+    params = Params()
 
-    car_params = CarInterface.get_params(car_name, args['fingerprints'], args['car_fw'],
+    car_params = CarInterface.get_params(params, car_name, args['fingerprints'], args['car_fw'],
                                          experimental_long=args['experimental_long'], docs=False)
     if car_name in GEN1:
       TI.saved_candidate = car_name
       TI.saved_CarInterface = CarInterface
       TI.saved_finger = args['fingerprints']
-      car_params = TI.saved_CarInterface.get_params(TI.saved_candidate, TI.saved_finger, list(), experimental_long=False, docs=False)
+      car_params = TI.saved_CarInterface.get_params(params, TI.saved_candidate, TI.saved_finger, list(), experimental_long=False, docs=False)
       car_params.enableTorqueInterceptor = True
       
     car_interface = CarInterface(car_params, CarController, CarState)
@@ -103,18 +107,19 @@ class TestCarInterfaces(unittest.TestCase):
     # Run car interface
     now_nanos = 0
     CC = car.CarControl.new_message(**cc_msg)
+    controls = Controls(CI=car_interface)
     for _ in range(10):
-      car_interface.update(CC, [])
-      car_interface.apply(CC, now_nanos)
-      car_interface.apply(CC, now_nanos)
+      car_interface.update(CC, [], controls.frogpilot_variables)
+      car_interface.apply(CC, now_nanos, controls.frogpilot_variables)
+      car_interface.apply(CC, now_nanos, controls.frogpilot_variables)
       now_nanos += DT_CTRL * 1e9  # 10 ms
 
     CC = car.CarControl.new_message(**cc_msg)
     CC.enabled = True
     for _ in range(10):
-      car_interface.update(CC, [])
-      car_interface.apply(CC, now_nanos)
-      car_interface.apply(CC, now_nanos)
+      car_interface.update(CC, [], controls.frogpilot_variables)
+      car_interface.apply(CC, now_nanos, controls.frogpilot_variables)
+      car_interface.apply(CC, now_nanos, controls.frogpilot_variables)
       now_nanos += DT_CTRL * 1e9  # 10ms
 
     # Test controller initialization
