@@ -102,6 +102,8 @@ class CarInterface(CarInterfaceBase):
 
       if not self.CS.acc_active_last and not self.CS.ti_lkas_allowed:
         events.add(EventName.steerTempUnavailable)
+      if not self.CS.ti_lkas_allowed and TI.enabled:
+        events.add(EventName.torqueInterceptorTemporaryWarning)
 
     ret.events = events.to_msg()
 
