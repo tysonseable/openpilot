@@ -1096,6 +1096,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       AlertStatus.frogpilot, AlertSize.small,
       Priority.MID, VisualAlert.none, AudibleAlert.angry, 3.),
   },
+  
+  EventName.torqueInterceptorTemporaryWarning: {
+    ET.WARNING: Alert(
+      "Torque Interceptor not ready",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.MID, VisualAlert.none, AudibleAlert.none, .05),
+  },
 }
 
 

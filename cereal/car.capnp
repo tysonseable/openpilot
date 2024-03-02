@@ -133,6 +133,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     turningRight @132;
     vCruise69 @133;
     yourFrogTriedToKillMe @134;
+    torqueInterceptorTemporaryWarning @135;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
