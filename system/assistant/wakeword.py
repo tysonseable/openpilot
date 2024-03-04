@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 from openpilot.system.assistant.openwakeword import Model
 from openpilot.system.assistant.openwakeword.utils import download_models
+from openpilot.system.assistant.rev_speechd import SpeechToTextProcessor
 from openpilot.common.params import Params
 from cereal import messaging
 from openpilot.system.micd import SAMPLE_BUFFER, SAMPLE_RATE
@@ -10,7 +11,7 @@ from openpilot.system.micd import SAMPLE_BUFFER, SAMPLE_RATE
 
 class WakeWordListener:
   RATE = 12.5
-  PHRASE_MODEL_NAME = "alexa_v0.1"
+  PHRASE_MODEL_NAME = "hey_frog_pilot"
   MODEL_DIR = Path(__file__).parent / 'models'
   PHRASE_MODEL_PATH = f'{MODEL_DIR}/{PHRASE_MODEL_NAME}.onnx'
   MEL_MODEL_PATH = f'{MODEL_DIR}/melspectrogram.onnx'
@@ -19,7 +20,10 @@ class WakeWordListener:
   def __init__(self, model_path=PHRASE_MODEL_PATH, threshhold=THRESHOLD):
     self.owwModel = Model(wakeword_models=[model_path], melspec_model_path=self.MEL_MODEL_PATH, embedding_model_path=self.EMB_MODEL_PATH, sr=SAMPLE_RATE)
     self.sm = messaging.SubMaster(['microphoneRaw'])
+    
     self.params = Params()
+    reva_access_token = "02afQYxGXg_idiFSfieqIr4WE1fpT23ECj_NRFlJzZpLVRD75ft9-fSDy8SoGcd9V4OJz3x-QbPd-2jpGbPTkVtTSaD3A"
+    self.sttproc = SpeechToTextProcessor(access_token=reva_access_token)
 
     self.model_name = model_path.split("/")[-1].split(".onnx")[0]
     self.frame_index = 0
@@ -41,7 +45,9 @@ class WakeWordListener:
     detected = prediction_score[self.model_name] >= self.threshhold
     if detected:
       print("wake word detected")
-      self.params.put_bool("WakeWordDetected", True)
+      self.sttproc.run()
+      self.owwModel.reset()
+      #self.params.put_bool("WakeWordDetected", True)
     self.detected_last = detected
 
   def wake_word_runner(self):

@@ -2,8 +2,9 @@ import os
 import re
 import json
 import time
-from rev_ai.models import MediaConfig
-from rev_ai.streamingclient import RevAiStreamingClient
+from openpilot.system.assistant.mediaconfig import MediaConfig
+from openpilot.system.assistant.streamingclient import RevAiStreamingClient
+from openpilot.system.assistant.nav_setter import set_dest_from_transcript
 from websocket import _exceptions
 from threading import Thread, Event
 from queue import Queue
@@ -51,7 +52,10 @@ class SpeechToTextProcessor:
     self.awc = AssistantWidgetControl()
     self.sm = messaging.SubMaster(['microphoneRaw'])
     media_config = MediaConfig('audio/x-raw', 'interleaved', 16000, 'S16LE', 1)
-    self.streamclient = RevAiStreamingClient(self.reva_access_token, media_config)
+    try:
+      self.streamclient = RevAiStreamingClient(self.reva_access_token, media_config)
+    except Exception as e:
+      print(f"An error occurred: {e}")
     self.p = Params()
     self.error = False
 
@@ -92,9 +96,11 @@ class SpeechToTextProcessor:
         if data['type'] == 'final':
           # Extract and concatenate the final transcript then send it
           final_transcript = ' '.join([element['value'] for element in data['elements'] if element['type'] == 'text'])
+          print(final_transcript)
         else:
           # Handle partial transcripts (optional)
           partial_transcript = ' '.join([element['value'] for element in data['elements'] if element['type'] == 'text'])
+          print(partial_transcript)
           self.awc.set_text(re.sub(r'<[^>]*>', '', partial_transcript), final=False)
     except Exception as e:
       print(f"An error occurred: {e}")
@@ -106,8 +112,8 @@ class SpeechToTextProcessor:
     collector_thread = Thread(target=self.microphone_data_collector)
     final_transcript = ""
     self.error = False
-    while not self.p.get_bool("WakeWordDetected"):
-      time.sleep(.4)
+    #while not self.p.get_bool("WakeWordDetected"):
+      #time.sleep(.4)
     collector_thread.start()
     self.awc.begin()
     try:
@@ -115,6 +121,7 @@ class SpeechToTextProcessor:
                                              remove_disfluencies=True, # remove umms
                                              filter_profanity=True, # brand integridity or something
                                              detailed_partials=False, # don't need time stamps
+                                             max_segment_duration_seconds=5,
                                             )
       final_transcript = self.listen_print_loop(response_gen, final_transcript)
     except _exceptions.WebSocketAddressException as e:
@@ -130,12 +137,16 @@ class SpeechToTextProcessor:
       self.stop_thread.clear()
       print("collector_thread joined")
       self.awc.set_text(final_transcript, final=True)
-
+      if not self.error:
+        set_dest_from_transcript(final_transcript)
+      else:
+        self.awc.error()
+      
 def main():
-  reva_access_token = Params().get("RevAIToken")
+  reva_access_token = "02afQYxGXg_idiFSfieqIr4WE1fpT23ECj_NRFlJzZpLVRD75ft9-fSDy8SoGcd9V4OJz3x-QbPd-2jpGbPTkVtTSaD3A"
   processor = SpeechToTextProcessor(access_token=reva_access_token)
   while True:
-    processor.p.put_bool("WakeWordDetected", False)
+    #processor.p.put_bool("WakeWordDetected", False)
     processor.run()
 
 if __name__ == "__main__":
