@@ -358,7 +358,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"RefuseVolume", PERSISTENT},
     {"RelaxedFollow", PERSISTENT},
     {"RelaxedJerk", PERSISTENT},
-    {"RevAIToken", PERSISTENT},
+    {"RevAIKey", PERSISTENT},
     {"ReverseCruise", PERSISTENT},
     {"ReverseCruiseUI", PERSISTENT},
     {"RoadEdgesWidth", PERSISTENT},

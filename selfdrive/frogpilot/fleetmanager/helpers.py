@@ -245,7 +245,7 @@ def get_amap_key():
 
 #Rev AI token
 def get_revai_token():
-  token = params.get("RevAIToken", encoding='utf8')
+  token = params.get("RevAIKey", encoding='utf8')
   return token.strip() if token is not None else None
 
 def get_SearchInput():
@@ -423,7 +423,7 @@ def revai_token_input(postvars):
     return postvars
   else:
     token = postvars.get("revai_token_val").strip()
-    params.put("RevAIToken", token)
+    params.put("RevAIKey", token)
   return token
 
 def gcj02towgs84(lng, lat):

@@ -17,7 +17,7 @@ protected:
   void hideEvent(QHideEvent *event) override;
 
 private:
-  void createMapboxKeyControl(ButtonControl *&control, const QString &label, const std::string &paramKey, const QString &prefix);
+  void createAccessTokenControl(ButtonControl *&control, const QString &label, const std::string &paramKey, const QString &prefix);
   void updateState();
   void updateStep();
 
@@ -29,12 +29,15 @@ private:
 
   ButtonControl *publicMapboxKeyControl;
   ButtonControl *secretMapboxKeyControl;
+  ButtonControl *secretRevAIKeyControl;
+
   LabelControl *ipLabel;
 
   WifiManager *wifi;
 
   bool mapboxPublicKeySet;
   bool mapboxSecretKeySet;
+  bool secretRevAIKeySet;
   bool setupCompleted;
   QPixmap pixmap;
   QString currentStep = "../assets/images/setup_completed.png";

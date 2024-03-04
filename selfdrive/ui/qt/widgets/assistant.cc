@@ -67,15 +67,15 @@ void AssistantOverlay::updateState(const UIState &s) {
     switch (current_state) {  // Handle UI updates
       case cereal::SpeechToText::State::BEGIN:
         if (!hideTimer->isActive()) animateOverlay(true);
-        updateText("Hello, I'm listening");
+        updateText(tr("Hello, I'm listening"));
         hideTimer->start(30000);
         break;
       case cereal::SpeechToText::State::EMPTY:
-        updateText("Sorry, I didn't catch that");
+        updateText(tr("Sorry, I didn't catch that"));
         hideTimer->start(8000);
         break;
       case cereal::SpeechToText::State::ERROR:
-        updateText("Sorry, an error occorred");
+        updateText(tr("Sorry, an error occorred"));
         hideTimer->start(8000);
         break;
       case cereal::SpeechToText::State::FINAL:

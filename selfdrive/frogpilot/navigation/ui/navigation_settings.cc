@@ -467,12 +467,15 @@ Primeless::Primeless(QWidget *parent) : QWidget(parent) {
                                        "", searchOptions);
   list->addItem(searchInput);
 
-  createMapboxKeyControl(publicMapboxKeyControl, tr("Public Mapbox Key"), "MapboxPublicKey", "pk.");
-  createMapboxKeyControl(secretMapboxKeyControl, tr("Secret Mapbox Key"), "MapboxSecretKey", "sk.");
+  createAccessTokenControl(publicMapboxKeyControl, tr("Public Mapbox Key"), "MapboxPublicKey", "pk.");
+  createAccessTokenControl(secretMapboxKeyControl, tr("Secret Mapbox Key"), "MapboxSecretKey", "sk.");
+  createAccessTokenControl(secretRevAIKeyControl, tr("Secret RevAI Key"), "RevAIKey", "");
 
   mapboxPublicKeySet = !params.get("MapboxPublicKey").empty();
   mapboxSecretKeySet = !params.get("MapboxSecretKey").empty();
-  setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet;
+  secretRevAIKeySet = !params.get("RevAIKey").empty() || params.getBool("VoiceControl");
+
+  setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet && secretRevAIKeySet;
 
   QHBoxLayout *setupLayout = new QHBoxLayout();
   setupLayout->setMargin(0);
@@ -538,17 +541,22 @@ void Primeless::updateState() {
 
   mapboxPublicKeySet = !params.get("MapboxPublicKey").empty();
   mapboxSecretKeySet = !params.get("MapboxSecretKey").empty();
-  setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet && setupCompleted;
+  // if VoiceControl param is enabled, the RevAIKey is required
+  secretRevAIKeySet = !params.get("RevAIKey").empty() && params.getBool("VoiceControl");
+
+  setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet && secretRevAIKeySet && setupCompleted;
 
   publicMapboxKeyControl->setText(mapboxPublicKeySet ? tr("REMOVE") : tr("ADD"));
   secretMapboxKeyControl->setText(mapboxSecretKeySet ? tr("REMOVE") : tr("ADD"));
+  secretRevAIKeyControl->setText(secretRevAIKeySet ? tr("REMOVE") : tr("ADD"));
+  secretRevAIKeyControl->setVisible(params.getBool("VoiceControl"));
 
   if (imageLabel->isVisible()) {
     updateStep();
   }
 }
 
-void Primeless::createMapboxKeyControl(ButtonControl *&control, const QString &label, const std::string &paramKey, const QString &prefix) {
+void Primeless::createAccessTokenControl(ButtonControl *&control, const QString &label, const std::string &paramKey, const QString &prefix) {
   control = new ButtonControl(label, "", tr("Manage your %1."), this);
   QObject::connect(control, &ButtonControl::clicked, this, [this, control, label, paramKey, prefix] {
     if (control->text() == tr("ADD")) {
@@ -558,6 +566,10 @@ void Primeless::createMapboxKeyControl(ButtonControl *&control, const QString &l
       }
       if (key.length() >= 80) {
         params.put(paramKey, key.toStdString());
+      }
+      // Rev AI token special case
+      if (paramKey == "RevAIKey") {
+        params.put("RevAIKey", key.toStdString());
       }
     } else {
       params.remove(paramKey);
