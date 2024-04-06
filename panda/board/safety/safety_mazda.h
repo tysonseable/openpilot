@@ -87,7 +87,7 @@ bool valid = addr_safety_check(to_push, &mazda_rx_checks, NULL, NULL, NULL, NULL
 bool enable_ti = false;
 bool enable_ri = false;
 const uint16_t MAZDA_PARAM_ENABLE_TI = 1;
-const uint16_t MAZDA_PARAM_ENABLE_RI = 1;
+const uint16_t MAZDA_PARAM_ENABLE_RI = 2;
 
 // track msgs coming from OP so that we know what CAM msgs to drop and what to forward
 static void mazda_rx_hook(const CANPacket_t *to_push) {
