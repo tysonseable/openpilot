@@ -166,7 +166,6 @@ class CarState(CarStateBase):
 
       checks += [
         ("ENGINE_DATA", 100),
-        ("CRZ_CTRL", 50),
         ("CRZ_EVENTS", 50),
         ("CRZ_BTNS", 10),
         ("PEDALS", 50),
