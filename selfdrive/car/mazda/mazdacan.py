@@ -175,7 +175,7 @@ STATIC_DATA_366 = [0xFFF7FE7F, 0xFBFF3FC]
 static_data_list = [STATIC_DATA_361, STATIC_DATA_362, STATIC_DATA_363, STATIC_DATA_364, STATIC_DATA_365, STATIC_DATA_366]
 
 
-def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
+def create_radar_command(packer, car_fingerprint, frame, CC, CS, params, hold):
   accel = 0
   ret = []
   crz_ctrl = CS.crz_cntr
@@ -194,6 +194,8 @@ def create_radar_command(packer, car_fingerprint, frame, CC, CS, params):
       crz_info["ACC_SET_ALLOWED"] = int(bool(int(CS.cp.vl["GEAR"]["GEAR"]) & 4)) # we can set ACC_SET_ALLOWED bit when in drive. Allows crz to be set from 1kmh.
       crz_info["CRZ_ENDED"] = 0 # this should keep acc on down to 5km/h on my 2018 M3
       crz_info["ACCEL_CMD"] = accel
+      crz_info["STOPPING_MAYBE"] = hold
+      crz_info["STOPPING_MAYBE2"] = hold
       
       crz_ctrl["CRZ_ACTIVE"] = int(CC.longActive)
       crz_ctrl["ACC_ACTIVE_2"] = int(CC.longActive)

@@ -159,7 +159,7 @@ class CarState(CarStateBase):
       self.crz_info = copy.copy(cp_cam.vl["CRZ_INFO"])
       self.crz_cntr = copy.copy(cp_cam.vl["CRZ_CTRL"])
       ret.cruiseState.enabled = cp.vl["PEDALS"]["ACC_ACTIVE"] == 1
-      ret.cruiseState.available = cp.vl["PEDALS"]["CRZ_AVAILABLE"] == 1    
+      ret.cruiseState.available = cp.vl["PEDALS"]["CRZ_AVAILABLE"] == 1
     else: # normal mode without ri harness
       ret.cruiseState.available = cp.vl["CRZ_CTRL"]["CRZ_AVAILABLE"] == 1
       ret.cruiseState.enabled = cp.vl["CRZ_CTRL"]["CRZ_ACTIVE"] == 1

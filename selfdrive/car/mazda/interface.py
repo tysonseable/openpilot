@@ -60,7 +60,7 @@ class CarInterface(CarInterfaceBase):
         ret.longitudinalActuatorDelayLowerBound = 0.3
         ret.longitudinalActuatorDelayUpperBound = 1.5
         ret.startingState = True
-        
+        ret.enableGasInterceptor = True
         ret.flags |= MazdaFlags.RADAR_INTERCEPT_MODE.value
         ret.safetyConfigs[0].safetyParam |= Panda.FLAG_MAZDA_RADAR_INTERCEPT_MODE
         
