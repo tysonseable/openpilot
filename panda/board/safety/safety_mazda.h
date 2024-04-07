@@ -81,6 +81,15 @@ static int mazda_rx_hook(CANPacket_t *to_push) {
 
     if (addr == MAZDA_PEDALS) {
       brake_pressed = (GET_BYTE(to_push, 0) & 0x10U);
+      bool cruise_engaged = GET_BYTE(to_push, 0) & 0x8U;
+      if (cruise_engaged) {
+        if (!cruise_engaged_prev) {
+          controls_allowed = 1;
+        }
+      } else {
+        controls_allowed = 0;
+      }
+      cruise_engaged_prev = cruise_engaged;
     }
 
     generic_rx_checks((addr == MAZDA_LKAS));
