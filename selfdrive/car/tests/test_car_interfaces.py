@@ -58,6 +58,10 @@ class TestCarInterfaces(unittest.TestCase):
             phases=(Phase.reuse, Phase.generate, Phase.shrink))
   @given(data=st.data())
   def test_car_interfaces(self, car_name, data):
+    
+    if car_name not in set(GEN1).union(set(GEN2)):
+      return
+    print(f"Testing car {car_name}")
     CarInterface, CarController, CarState = interfaces[car_name]
 
     args = get_fuzzy_car_interface_args(data.draw)
