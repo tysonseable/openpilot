@@ -31,7 +31,7 @@ services: dict[str, tuple] = {
   "temperatureSensor2": (True, 2., 200),
   "gpsNMEA": (True, 9.),
   "deviceState": (True, 2., 1),
-  "can": (True, 100., 1223),  # decimation gives ~5 msgs in a full segment
+  "can": (True, 100., 1),  # decimation set to 1 to log every message
   "controlsState": (True, 100., 10),
   "pandaStates": (True, 10., 1),
   "peripheralState": (True, 2., 1),
