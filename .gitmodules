@@ -9,13 +9,13 @@
   url = ../../moretore/cereal.git
 [submodule "rednose_repo"]
   path = rednose_repo
-  url = ../../comma/rednose.git
+  url = ../../commaai/rednose.git
 [submodule "body"]
   path = body
-  url = ../../comma/body.git
+  url = ../../commaai/body.git
 [submodule "teleoprtc_repo"]
   path = teleoprtc_repo
-  url = ../../comma/teleoprtc
+  url = ../../commaai/teleoprtc
 [submodule "tinygrad"]
   path = tinygrad_repo
   url = https://github.com/geohot/tinygrad.git
