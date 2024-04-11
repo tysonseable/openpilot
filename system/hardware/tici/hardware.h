@@ -51,11 +51,22 @@ public:
 
   static void reboot() { std::system("sudo reboot"); }
   static void soft_reboot() {
-    std::system("echo 894000.i2c | sudo tee /sys/bus/platform/drivers/i2c_geni/unbind");
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::system("echo 894000.i2c | sudo tee /sys/bus/platform/drivers/i2c_geni/bind");
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::system("sudo systemctl restart comma");
+    const std::vector<std::string> commands = {
+      "tmux kill-session -t comma",
+      "rm -f /tmp/safe_staging_overlay.lock",
+      "tmux new -s comma -d '/data/continue.sh'"
+    };
+    for (const auto& cmd : commands) {
+      int retry_limit = 3;
+      int result;
+      do {
+        result = std::system(cmd.c_str());
+        --retry_limit;
+      } while (result != 0 && retry_limit > 0);
+      if (result != 0) {
+        reboot();
+      }
+    }
   }
   static void poweroff() { std::system("sudo poweroff"); }
   static void set_brightness(int percent) {

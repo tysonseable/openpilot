@@ -19,7 +19,7 @@ class Pc(HardwareBase):
 
   def reboot(self, reason=None):
     print("REBOOT!")
-  
+
   def soft_reboot(self):
     print("SOFT REBOOT!")
 

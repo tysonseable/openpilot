@@ -135,12 +135,14 @@ class Tici(HardwareBase):
     subprocess.check_output(["sudo", "reboot"])
 
   def soft_reboot(self):
-    # Reload the touchscreen driver to reset touch_count and avoid triggering a system reset prompt
-    sudo_write("894000.i2c", "/sys/bus/platform/drivers/i2c_geni/unbind")
-    time.sleep(0.5)
-    sudo_write("894000.i2c", "/sys/bus/platform/drivers/i2c_geni/bind")
-    time.sleep(0.5)
-    os.system("sudo systemctl restart comma")
+    commands = [
+      ['rm', '-f', '/tmp/safe_staging_overlay.lock'],
+      ['tmux', 'new', '-s', 'commatmp', '-d', '/data/continue.sh'],
+      ['tmux', 'kill-session', '-t', 'comma'],
+      ['tmux', 'rename', 'comma'],
+    ]
+    for command in commands:
+        subprocess.run(command, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
   def uninstall(self):
     Path("/data/__system_reset__").touch()
